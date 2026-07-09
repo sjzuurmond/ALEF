@@ -215,6 +215,42 @@ PY
   testdekking (`ICoverageArc`) en generatie-only helpers — conform het
   keep/drop-filter hierboven.
 
+### Annotaties: een overlay-zijtabel
+
+Commentaar, bronverwijzingen en metatags zijn in MPS geen kinderen in de
+containment-boom maar **node-attributen** (`CommentAttribute`,
+`BronVerwijzingAttribute`, `MetatagsAsAttribute`, alle `extends NodeAttribute`,
+gebonden aan de marker-interfaces `ICanHaveComment` / `ICanHaveBron` /
+`IHaveMetatags`). Een node-attribuut hangt *op identiteit* aan een node, los van de
+child-structuur.
+
+JSON kent geen attribuut-begrip (alleen key/value-properties). We modelleren dit
+daarom als **overlay-zijtabel** in plaats van inline: een top-level `annotaties`,
+gesleuteld op `NodeId`. Nodes krijgen alleen een `id` waar dat nodig is (als doel van
+een cross-reference of als annotatiedoel). Dit houdt de uitvoerbare boom schoon en
+komt exact overeen met hoe MPS attributen aanhangt.
+
+Dezelfde overlay draagt de **linguïstische rendering-trace**. De `linguistics`-runtime
+rendert de AST naar een `NodeRendering`-boom waarin knopen een **origin** hebben (de
+node waar de tekst bij hoort, `getOrigin()`) en soms een **target** (voor
+referentie-spans, de node waar de verwijzing naartoe wijst, `getTarget()`). In de
+overlay is de sleutel de origin, en zijn de `rendering.verwijzingen[].naar` de
+targets — dezelfde kant op als een cross-reference in het model. Zo levert de
+grammatica per node de natuurlijke-taal-weergave terug (uitlegbaarheid richting
+juristen) zonder de kern te vervuilen.
+
+```jsonc
+"annotaties": {
+  "regel.bmi":    { "commentaar": "...", "bron": [ { "soort": "vrij", "wet": "...", "verwijzing": "art. 3, tweede lid" } ], "metatags": [ { "naam": "status", "waarde": "concept" } ] },
+  "regel.bmi.v1": { "rendering": { "tekst": "De bmi van een Persoon is gelijk aan ...", "verwijzingen": [ { "tekst": "bmi", "naar": "at.persoon.bmi" } ] } }
+}
+```
+
+De overlay-sleutels moeten overeenkomen met een `id` in het model. Dat is een
+semantische invariant die JSON Schema niet afdwingt; een kleine linter (zie het
+validatie-snippet in de repo-historie) controleert dat elke `referentie.naar`,
+`verwijzingen[].naar` en overlay-sleutel oplost naar een bestaand id.
+
 ### Volgende stap
 
 Het schema dekt nu de kern-constructies (acht actiesoorten, condities/predicaten,

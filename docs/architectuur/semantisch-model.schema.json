@@ -8,6 +8,7 @@
   "additionalProperties": false,
   "properties": {
     "$comment": { "type": "string", "description": "Vrije toelichting; genegeerd bij interpretatie." },
+    "id": { "$ref": "#/$defs/NodeId" },
     "naam": { "type": "string" },
     "objectschema": { "$ref": "#/$defs/Objectschema" },
     "regelgroepen": {
@@ -18,7 +19,8 @@
       "type": "array",
       "description": "Wetsconstanten met waarden per geldigheidsperiode.",
       "items": { "$ref": "#/$defs/Parameterset" }
-    }
+    },
+    "annotaties": { "$ref": "#/$defs/Annotaties" }
   },
 
   "$defs": {
@@ -58,6 +60,7 @@
       "required": ["naam"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "naam": { "type": "string" },
         "attributen": { "type": "array", "items": { "$ref": "#/$defs/Attribuut" } },
         "kenmerken": {
@@ -78,6 +81,7 @@
       "required": ["naam", "type"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "naam": { "type": "string" },
         "type": { "$ref": "#/$defs/Datatype" }
       }
@@ -113,6 +117,7 @@
       "required": ["naam", "basis"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "naam": { "type": "string" },
         "basis": { "$ref": "#/$defs/Datatype" }
       }
@@ -261,6 +266,7 @@
       "required": ["naam", "type"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "naam": { "type": "string" },
         "type": { "$ref": "#/$defs/Datatype" }
       }
@@ -291,6 +297,7 @@
       "required": ["naam", "regels"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "naam": { "type": "string" },
         "recursief": { "type": "boolean", "default": false, "description": "Herhaal tot fixpoint (afgeleide feiten voeden volgende regels)." },
         "imperatief": { "type": "boolean", "default": false },
@@ -305,6 +312,7 @@
       "additionalProperties": false,
       "properties": {
         "$comment": { "type": "string", "description": "Vrije toelichting; genegeerd bij interpretatie." },
+        "id": { "$ref": "#/$defs/NodeId" },
         "naam": { "type": "string" },
         "versies": {
           "type": "array",
@@ -320,6 +328,7 @@
       "required": ["geldig", "actie"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "geldig": { "$ref": "#/$defs/Periode" },
         "variabelen": {
           "type": "array",
@@ -801,6 +810,87 @@
         "operator": { "type": "string", "enum": ["tijdsevenredig", "tijdsduurDat", "conditioneel"] },
         "expressie": { "$ref": "#/$defs/Expressie" },
         "conditie": { "$ref": "#/$defs/Conditie" }
+      }
+    },
+
+    "NodeId": {
+      "title": "Node-identiteit",
+      "description": "Stabiele identifier van een node. Nodig als doel van een cross-reference (bv. 'referentie.naar') en als sleutel in de 'annotaties'-overlay. Ken alleen id's toe waar ze nodig zijn.",
+      "type": "string",
+      "minLength": 1
+    },
+
+    "Annotaties": {
+      "title": "Annotatie-overlay",
+      "description": "Zijtabel met niet-semantische annotaties, losgekoppeld van de uitvoerbare boom en gesleuteld op NodeId. Dit is de tegenhanger van MPS NodeAttributes (CommentAttribute, BronVerwijzingAttribute, MetatagsAsAttribute): in MPS hangen die als attribuut aan een node, niet als kind; hier hangen ze als overlay aan het id van de node. Ook de linguïstische rendering-trace (linguistics origin/target) leeft hier. De sleutels MOETEN overeenkomen met een 'id' ergens in het model; dat is een semantische invariant die JSON Schema niet afdwingt (te controleren met een linter).",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/Annotatie" }
+    },
+
+    "Annotatie": {
+      "description": "Alle annotaties op één node. Elk veld is optioneel.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "commentaar": {
+          "type": "string",
+          "description": "Vrije toelichting (MPS CommentAttribute / ICanHaveComment)."
+        },
+        "bron": {
+          "type": "array",
+          "description": "Verwijzingen naar de bronwet (MPS BronVerwijzingAttribute / ICanHaveBron). Herkomst/traceerbaarheid.",
+          "items": { "$ref": "#/$defs/Bronverwijzing" }
+        },
+        "metatags": {
+          "type": "array",
+          "description": "Sleutel/waarde-labels (MPS MetatagsAsAttribute / IHaveMetatags).",
+          "items": {
+            "type": "object",
+            "required": ["naam"],
+            "additionalProperties": false,
+            "properties": {
+              "naam": { "type": "string" },
+              "waarde": { "type": "string" }
+            }
+          }
+        },
+        "rendering": { "$ref": "#/$defs/Rendering" }
+      }
+    },
+
+    "Bronverwijzing": {
+      "description": "Verwijzing naar een stuk wetgeving (bronspraak: JuriConnectWetsReferentie, VrijeVerwijzing, CognitatieVerwijzing).",
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "type": "string", "enum": ["juriConnect", "vrij", "cognitatie"] },
+        "wet": { "type": "string" },
+        "verwijzing": { "type": "string", "description": "Bv. een JuriConnect-artikelaanduiding of vrije brontekst." }
+      }
+    },
+
+    "Rendering": {
+      "title": "Linguïstische rendering (NodeRendering)",
+      "description": "De natuurlijke-taal-weergave van de node waarvan dit het annotatie-id is — de 'origin' van de rendering in de linguistics-runtime (r.getOrigin()). 'verwijzingen' zijn de deelspans binnen 'tekst' die naar een andere node verwijzen; hun 'naar' is de linguistics-'target' (r.getTarget()), dezelfde kant op als een cross-reference in het model.",
+      "type": "object",
+      "required": ["tekst"],
+      "additionalProperties": false,
+      "properties": {
+        "tekst": { "type": "string", "description": "De gerenderde Regelspraak-tekst voor deze node." },
+        "taal": { "type": "string", "default": "nl" },
+        "verwijzingen": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["naar"],
+            "additionalProperties": false,
+            "properties": {
+              "tekst": { "type": "string", "description": "De letterlijke referentie-span binnen 'tekst'." },
+              "naar": { "$ref": "#/$defs/NodeId" }
+            }
+          }
+        }
       }
     }
   }

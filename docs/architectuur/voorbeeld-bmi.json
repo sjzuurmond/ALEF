@@ -13,11 +13,12 @@
     ],
     "objecttypes": [
       {
+        "id": "ot.persoon",
         "naam": "Persoon",
         "attributen": [
           { "naam": "gewicht", "type": { "soort": "numeriek", "decimalen": 0 } },
           { "naam": "lengte", "type": { "soort": "numeriek", "decimalen": 2 } },
-          { "naam": "bmi", "type": { "soort": "numeriek", "decimalen": 1 } },
+          { "id": "at.persoon.bmi", "naam": "bmi", "type": { "soort": "numeriek", "decimalen": 1 } },
           { "naam": "categorie", "type": { "soort": "domein", "domein": "BMI categorie" } }
         ]
       }
@@ -29,9 +30,11 @@
       "regels": [
         {
           "$comment": "Regel 'BMI': bmi van een Persoon = afronden( gewicht / (lengte * lengte), 1 decimaal).",
+          "id": "regel.bmi",
           "naam": "BMI",
           "versies": [
             {
+              "id": "regel.bmi.v1",
               "geldig": {},
               "actie": {
                 "soort": "gelijkstelling",
@@ -149,5 +152,25 @@
         }
       ]
     }
-  ]
+  ],
+  "annotaties": {
+    "regel.bmi": {
+      "commentaar": "Body Mass Index: gewicht gedeeld door lengte in het kwadraat.",
+      "bron": [
+        { "soort": "vrij", "wet": "Voorbeeldwet gezondheid", "verwijzing": "art. 3, tweede lid" }
+      ],
+      "metatags": [
+        { "naam": "status", "waarde": "concept" }
+      ]
+    },
+    "regel.bmi.v1": {
+      "rendering": {
+        "tekst": "De bmi van een Persoon is gelijk aan het gewicht van de Persoon gedeeld door (de lengte van de Persoon maal de lengte van de Persoon), afgerond op 1 decimaal.",
+        "verwijzingen": [
+          { "tekst": "bmi", "naar": "at.persoon.bmi" },
+          { "tekst": "Persoon", "naar": "ot.persoon" }
+        ]
+      }
+    }
+  }
 }
