@@ -1,0 +1,174 @@
+{
+  "$comment": "The BMI domain expressed in the generic object-centric core. Compare with voorbeeld-bmi.json (ALEF-flavoured). Note: arithmetic is a single 'operation' IR with no parentheses (the operand tree groups); navigation is object-centric 'selection'; units are on the numeric type.",
+  "name": "BMI",
+  "dataModel": {
+    "domains": [
+      {
+        "name": "BMICategory",
+        "base": { "kind": "enumeration", "values": ["Underweight", "Healthy weight", "Overweight", "Obese"] }
+      }
+    ],
+    "entityTypes": [
+      {
+        "id": "et.person",
+        "name": "Person",
+        "attributes": [
+          { "name": "weight", "type": { "kind": "number", "spec": { "unit": "kg", "precision": 0 } } },
+          { "name": "height", "type": { "kind": "number", "spec": { "unit": "m", "precision": 2 } } },
+          { "id": "at.person.bmi", "name": "bmi", "type": { "kind": "number", "spec": { "precision": 1 } } },
+          { "name": "category", "type": { "kind": "domain", "domain": "BMICategory" } }
+        ]
+      }
+    ]
+  },
+  "ruleGroups": [
+    {
+      "name": "BMI category",
+      "rules": [
+        {
+          "$comment": "bmi of a Person = round( divide(weight, multiply(height, height)), 1 ). No parentheses node: the operand tree encodes grouping.",
+          "id": "rule.bmi",
+          "name": "BMI",
+          "versions": [
+            {
+              "id": "rule.bmi.v1",
+              "validity": {},
+              "action": {
+                "kind": "assignment",
+                "target": {
+                  "kind": "selection",
+                  "id": "sel.bmi",
+                  "object": { "kind": "universal", "id": "person", "entityType": "Person" },
+                  "selector": { "kind": "attribute", "name": "bmi" }
+                },
+                "value": {
+                  "kind": "operation",
+                  "op": "round",
+                  "precision": 1,
+                  "operands": [
+                    {
+                      "kind": "operation",
+                      "op": "divide",
+                      "operands": [
+                        {
+                          "kind": "selection",
+                          "id": "sel.weight",
+                          "object": { "kind": "reference", "to": "person" },
+                          "selector": { "kind": "attribute", "name": "weight" }
+                        },
+                        {
+                          "kind": "operation",
+                          "op": "multiply",
+                          "operands": [
+                            {
+                              "kind": "selection",
+                              "id": "sel.height.1",
+                              "object": { "kind": "reference", "to": "person" },
+                              "selector": { "kind": "attribute", "name": "height" }
+                            },
+                            {
+                              "kind": "selection",
+                              "id": "sel.height.2",
+                              "object": { "kind": "reference", "to": "person" },
+                              "selector": { "kind": "attribute", "name": "height" }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$comment": "Initial assignment.",
+          "id": "rule.bmi.init",
+          "name": "BMI category initial",
+          "versions": [
+            {
+              "validity": {},
+              "action": {
+                "kind": "assignment",
+                "initial": true,
+                "target": {
+                  "kind": "selection",
+                  "object": { "kind": "universal", "entityType": "Person" },
+                  "selector": { "kind": "attribute", "name": "category" }
+                },
+                "value": { "kind": "enumValue", "domain": "BMICategory", "value": "Obese" }
+              }
+            }
+          ]
+        },
+        {
+          "$comment": "Decision-table row normalised to a rule: if bmi >= 18.5 and bmi < 25 then category = Healthy weight.",
+          "id": "rule.bmi.table",
+          "name": "BMI category (table)",
+          "versions": [
+            {
+              "validity": {},
+              "condition": {
+                "kind": "compound",
+                "logic": "and",
+                "conditions": [
+                  {
+                    "kind": "simple",
+                    "subject": {
+                      "kind": "selection",
+                      "object": { "kind": "universal", "id": "p", "entityType": "Person" },
+                      "selector": { "kind": "attribute", "name": "bmi" }
+                    },
+                    "predicate": { "kind": "comparison", "operator": "ge", "value": { "kind": "number", "value": "18.5" } }
+                  },
+                  {
+                    "kind": "simple",
+                    "subject": {
+                      "kind": "selection",
+                      "object": { "kind": "reference", "to": "p" },
+                      "selector": { "kind": "attribute", "name": "bmi" }
+                    },
+                    "predicate": { "kind": "comparison", "operator": "lt", "value": { "kind": "number", "value": "25" } }
+                  }
+                ]
+              },
+              "action": {
+                "kind": "assignment",
+                "target": {
+                  "kind": "selection",
+                  "object": { "kind": "reference", "to": "p" },
+                  "selector": { "kind": "attribute", "name": "category" }
+                },
+                "value": { "kind": "enumValue", "domain": "BMICategory", "value": "Healthy weight" }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "annotations": {
+    "rule.bmi": {
+      "comment": "Body Mass Index: weight divided by height squared.",
+      "source": [ { "kind": "free", "law": "Example Health Act", "reference": "art. 3(2)" } ],
+      "metatags": [ { "name": "status", "value": "draft" } ]
+    },
+    "rule.bmi.v1": {
+      "rendering": {
+        "text": "The bmi of a Person equals the weight of the Person divided by (the height of the Person times the height of the Person), rounded to 1 decimal.",
+        "segments": [
+          { "text": "The " },
+          { "origin": "sel.bmi", "target": "at.person.bmi", "text": "bmi" },
+          { "text": " of a Person equals " },
+          { "origin": "sel.weight", "text": "the weight of the Person" },
+          { "text": " divided by (" },
+          { "origin": "sel.height.1", "text": "the height of the Person" },
+          { "text": " times " },
+          { "origin": "sel.height.2", "text": "the height of the Person" },
+          { "text": "), rounded to 1 decimal." }
+        ]
+      }
+    }
+  }
+}

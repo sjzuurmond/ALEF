@@ -1,0 +1,850 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sjzuurmond/ALEF/docs/architectuur/core-model.schema.json",
+  "title": "Object-centric rule interchange core",
+  "description": "A generic, engine-agnostic semantic core for executable legislation. Keeps ALEF's object/instance-centric shape (entities, relations, universally-quantified rules, object-graph actions, dimensions, units, timelines) because that matches how law is formulated, but uses generic English terminology and a clean operation-based expression IR instead of surface-specific constructs. Theoretical trial; deliberately NOT identical to RegelRecht RFC-001, but borrows its clean bits (operation enum, type_spec, temporal spec, output-as-value). Discriminator field is 'kind'. Nesting = containment; string fields ending in Ref / named 'to'/'*Id' = cross-references. See core-model.md.",
+  "type": "object",
+  "required": ["name", "dataModel", "ruleGroups"],
+  "additionalProperties": false,
+  "properties": {
+    "$comment": { "type": "string" },
+    "id": { "$ref": "#/$defs/NodeId" },
+    "name": { "type": "string" },
+    "dataModel": { "$ref": "#/$defs/DataModel" },
+    "ruleGroups": { "type": "array", "items": { "$ref": "#/$defs/RuleGroup" } },
+    "parameterSets": { "type": "array", "items": { "$ref": "#/$defs/ParameterSet" } },
+    "annotations": { "$ref": "#/$defs/Annotations" }
+  },
+
+  "$defs": {
+
+    "NodeId": {
+      "title": "Node identity",
+      "description": "Stable identifier. Required as the target of a cross-reference ('to') and as a key in the 'annotations' overlay. Assign only where needed.",
+      "type": "string",
+      "minLength": 1
+    },
+
+    "Period": {
+      "title": "Validity period",
+      "description": "Open-ended interval. Missing bound = unbounded; empty object = always valid. Bounds are ISO-8601 dates.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string", "format": "date" },
+        "to": { "type": "string", "format": "date" },
+        "throughInclusive": { "type": "boolean", "default": true }
+      }
+    },
+
+    "DataModel": {
+      "title": "Data model (object schema)",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entityTypes": { "type": "array", "items": { "$ref": "#/$defs/EntityType" } },
+        "domains": { "type": "array", "description": "Named, reusable datatypes (incl. enumerations).", "items": { "$ref": "#/$defs/Domain" } },
+        "relationTypes": { "type": "array", "items": { "$ref": "#/$defs/RelationType" } },
+        "dimensions": { "type": "array", "items": { "$ref": "#/$defs/Dimension" } },
+        "unitSystems": { "type": "array", "items": { "$ref": "#/$defs/UnitSystem" } },
+        "parameters": { "type": "array", "items": { "$ref": "#/$defs/Parameter" } }
+      }
+    },
+
+    "EntityType": {
+      "description": "A kind of thing law reasons about (ALEF Objecttype).",
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "attributes": { "type": "array", "items": { "$ref": "#/$defs/Attribute" } },
+        "characteristics": {
+          "type": "array",
+          "description": "Boolean characteristics of the entity (ALEF Kenmerk).",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": { "id": { "$ref": "#/$defs/NodeId" }, "name": { "type": "string" } }
+          }
+        }
+      }
+    },
+
+    "Attribute": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "type": { "$ref": "#/$defs/DataType" },
+        "temporal": { "$ref": "#/$defs/Temporal" }
+      }
+    },
+
+    "RelationType": {
+      "description": "A relationship between entity types, via roles (ALEF FeitType).",
+      "type": "object",
+      "required": ["roles"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "reciprocal": { "type": "boolean", "default": false },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "entityType"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "entityType": { "type": "string", "description": "Ref to EntityType.name." },
+              "plural": { "type": "boolean", "default": false }
+            }
+          }
+        }
+      }
+    },
+
+    "Domain": {
+      "type": "object",
+      "required": ["name", "base"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "base": { "$ref": "#/$defs/DataType" }
+      }
+    },
+
+    "Dimension": {
+      "description": "A named axis; attributes may be arrays over its labels (per year, per bracket).",
+      "type": "object",
+      "required": ["name", "labels"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "labels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "UnitSystem": {
+      "type": "object",
+      "required": ["name", "baseUnits"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "baseUnits": { "type": "array", "items": { "type": "string" } },
+        "conversions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["base", "factor"],
+            "additionalProperties": false,
+            "properties": {
+              "base": { "type": "string" },
+              "factor": { "type": "string", "description": "Decimal factor as a string (preserve precision)." }
+            }
+          }
+        }
+      }
+    },
+
+    "Parameter": {
+      "description": "A law constant (rate, threshold), valued per period in a ParameterSet.",
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "type": { "$ref": "#/$defs/DataType" }
+      }
+    },
+    "ParameterSet": {
+      "type": "object",
+      "required": ["validity", "assignments"],
+      "additionalProperties": false,
+      "properties": {
+        "validity": { "$ref": "#/$defs/Period" },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["parameter", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "parameter": { "type": "string", "description": "Ref to Parameter.name." },
+              "value": { "$ref": "#/$defs/Literal" }
+            }
+          }
+        }
+      }
+    },
+
+    "DataType": {
+      "title": "Datatype",
+      "description": "Tagged with 'kind'. type_spec (unit/precision/min/max) borrowed from RegelRecht for the clean engine-agnostic numeric contract.",
+      "oneOf": [
+        { "$ref": "#/$defs/TypeNumber" },
+        { "$ref": "#/$defs/TypePercentage" },
+        { "$ref": "#/$defs/TypeText" },
+        { "$ref": "#/$defs/TypeBoolean" },
+        { "$ref": "#/$defs/TypeDateTime" },
+        { "$ref": "#/$defs/TypeEnumeration" },
+        { "$ref": "#/$defs/TypeDomainRef" },
+        { "$ref": "#/$defs/TypeDimensioned" }
+      ]
+    },
+    "TypeNumber": {
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": { "kind": { "const": "number" }, "spec": { "$ref": "#/$defs/TypeSpec" } }
+    },
+    "TypePercentage": {
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": { "kind": { "const": "percentage" }, "precision": { "type": "integer", "minimum": 0 } }
+    },
+    "TypeText": {
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": { "kind": { "const": "text" } }
+    },
+    "TypeBoolean": {
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": { "kind": { "const": "boolean" } }
+    },
+    "TypeDateTime": {
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "datetime" },
+        "granularity": { "type": "string", "enum": ["day", "month", "year", "second"] }
+      }
+    },
+    "TypeEnumeration": {
+      "type": "object", "required": ["kind", "values"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "enumeration" },
+        "values": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "TypeDomainRef": {
+      "type": "object", "required": ["kind", "domain"], "additionalProperties": false,
+      "properties": { "kind": { "const": "domain" }, "domain": { "type": "string", "description": "Ref to Domain.name." } }
+    },
+    "TypeDimensioned": {
+      "type": "object", "required": ["kind", "base", "dimensions"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "dimensioned" },
+        "base": { "$ref": "#/$defs/DataType" },
+        "dimensions": { "type": "array", "items": { "type": "string", "description": "Ref to Dimension.name." } }
+      }
+    },
+    "TypeSpec": {
+      "description": "Quantity-kind refinement of a number (RegelRecht-style).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "unit": { "$ref": "#/$defs/Unit" },
+        "precision": { "type": "integer", "minimum": 0, "description": "Decimal places." },
+        "min": { "type": "string" },
+        "max": { "type": "string" }
+      }
+    },
+    "Unit": {
+      "description": "Either a simple unit name (RegelRecht: 'euro','year','day',...) or a structured unit expression for compound units (kg/m^2).",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "numerator": { "type": "array", "items": { "$ref": "#/$defs/UnitPower" } },
+            "denominator": { "type": "array", "items": { "$ref": "#/$defs/UnitPower" } },
+            "percentage": { "type": "boolean", "default": false }
+          }
+        }
+      ]
+    },
+    "UnitPower": {
+      "type": "object", "required": ["base"], "additionalProperties": false,
+      "properties": { "base": { "type": "string" }, "exponent": { "type": "integer", "default": 1 } }
+    },
+
+    "Temporal": {
+      "description": "How a value relates to time (RegelRecht-style clean version; ALEF's full timeline algebra is the richer superset noted in core-model.md).",
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "enum": ["period", "pointInTime"] },
+        "periodType": { "type": "string", "enum": ["year", "month", "day", "continuous"] },
+        "reference": { "type": "string", "description": "e.g. $calculationDate, $januaryFirst." }
+      }
+    },
+
+    "RuleGroup": {
+      "type": "object",
+      "required": ["name", "rules"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "recursive": { "type": "boolean", "default": false, "description": "Iterate to a fixpoint (derived facts feed later rules)." },
+        "rules": { "type": "array", "items": { "$ref": "#/$defs/Rule" } }
+      }
+    },
+    "Rule": {
+      "type": "object",
+      "required": ["name", "versions"],
+      "additionalProperties": false,
+      "properties": {
+        "$comment": { "type": "string" },
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "versions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/RuleVersion" } }
+      }
+    },
+    "RuleVersion": {
+      "description": "Valid-per-period. Applies to EVERY instance of the subject (universal quantification), visible in navigation paths via a 'universal' anchor.",
+      "type": "object",
+      "required": ["validity", "action"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "validity": { "$ref": "#/$defs/Period" },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "$ref": "#/$defs/NodeId" },
+              "name": { "type": "string" },
+              "value": { "$ref": "#/$defs/Expression" }
+            }
+          }
+        },
+        "condition": { "$ref": "#/$defs/Condition" },
+        "action": { "$ref": "#/$defs/Action" }
+      }
+    },
+
+    "Action": {
+      "title": "Action",
+      "description": "One of the object-graph effects that make this core object-centric (ALEF's expressive advantage over field-only models).",
+      "oneOf": [
+        { "$ref": "#/$defs/Assignment" },
+        { "$ref": "#/$defs/SetCharacteristic" },
+        { "$ref": "#/$defs/CreateObject" },
+        { "$ref": "#/$defs/CreateFact" },
+        { "$ref": "#/$defs/ConsistencyCheck" },
+        { "$ref": "#/$defs/Distribution" },
+        { "$ref": "#/$defs/DayTypeDefinition" },
+        { "$ref": "#/$defs/TimelineStart" }
+      ]
+    },
+    "Assignment": {
+      "description": "Assign a value to a target slot. initial=true = only-if-empty (ALEF Initialisatie).",
+      "type": "object", "required": ["kind", "target"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "assignment" },
+        "initial": { "type": "boolean", "default": false },
+        "target": { "$ref": "#/$defs/Selection" },
+        "value": { "$ref": "#/$defs/Expression" }
+      }
+    },
+    "SetCharacteristic": {
+      "type": "object", "required": ["kind", "characteristic", "object"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "setCharacteristic" },
+        "characteristic": { "type": "string" },
+        "object": { "$ref": "#/$defs/Subject" }
+      }
+    },
+    "CreateObject": {
+      "type": "object", "required": ["kind", "role"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "createObject" },
+        "role": { "type": "string" },
+        "initializations": {
+          "type": "array",
+          "items": {
+            "type": "object", "required": ["attribute", "value"], "additionalProperties": false,
+            "properties": { "attribute": { "type": "string" }, "value": { "$ref": "#/$defs/Expression" } }
+          }
+        }
+      }
+    },
+    "CreateFact": {
+      "type": "object", "required": ["kind", "role", "other"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "createFact" },
+        "role": { "type": "string" },
+        "other": { "$ref": "#/$defs/Subject" }
+      }
+    },
+    "ConsistencyCheck": {
+      "description": "Attaches a consistency verdict; writes no value.",
+      "type": "object", "required": ["kind", "criterion"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "consistencyCheck" },
+        "criterion": { "$ref": "#/$defs/Condition" }
+      }
+    },
+    "Distribution": {
+      "type": "object", "required": ["kind", "amount", "recipient"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "distribution" },
+        "amount": { "$ref": "#/$defs/Selection" },
+        "remainder": { "$ref": "#/$defs/Selection" },
+        "recipient": {
+          "type": "object", "required": ["share"], "additionalProperties": false,
+          "properties": {
+            "share": { "$ref": "#/$defs/Selection" },
+            "proRata": { "$ref": "#/$defs/Selection" },
+            "maxClaim": { "$ref": "#/$defs/Selection" },
+            "precision": { "type": "integer" },
+            "sortCriteria": {
+              "type": "array",
+              "items": {
+                "type": "object", "required": ["selection"], "additionalProperties": false,
+                "properties": {
+                  "selection": { "$ref": "#/$defs/Selection" },
+                  "direction": { "type": "string", "enum": ["ascending", "descending"], "default": "ascending" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "DayTypeDefinition": {
+      "type": "object", "required": ["kind", "dayType"], "additionalProperties": false,
+      "properties": { "kind": { "const": "dayTypeDefinition" }, "dayType": { "type": "string" } }
+    },
+    "TimelineStart": {
+      "type": "object", "required": ["kind", "timeline", "subject", "startDate"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "timelineStart" },
+        "timeline": { "type": "string" },
+        "subject": { "$ref": "#/$defs/Subject" },
+        "startDate": { "$ref": "#/$defs/Expression" }
+      }
+    },
+
+    "Condition": {
+      "title": "Condition",
+      "oneOf": [
+        { "$ref": "#/$defs/SimpleCondition" },
+        { "$ref": "#/$defs/CompoundCondition" },
+        { "$ref": "#/$defs/UniquenessCondition" },
+        { "$ref": "#/$defs/PeriodCondition" },
+        { "$ref": "#/$defs/RuleStatusCondition" }
+      ]
+    },
+    "SimpleCondition": {
+      "description": "The predicate's left-hand side is implicit: it is 'subject'.",
+      "type": "object", "required": ["kind", "subject", "predicate"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "simple" },
+        "quantifier": { "$ref": "#/$defs/Quantifier" },
+        "subject": { "$ref": "#/$defs/Expression" },
+        "predicate": { "$ref": "#/$defs/Predicate" }
+      }
+    },
+    "CompoundCondition": {
+      "type": "object", "required": ["kind", "logic", "conditions"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "compound" },
+        "logic": { "type": "string", "enum": ["and", "or", "notAll", "none"] },
+        "quantifier": { "$ref": "#/$defs/Quantifier" },
+        "conditions": { "type": "array", "items": { "$ref": "#/$defs/Condition" } }
+      }
+    },
+    "UniquenessCondition": {
+      "type": "object", "required": ["kind", "selections"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "uniqueness" },
+        "selections": { "type": "array", "items": { "$ref": "#/$defs/Selection" } }
+      }
+    },
+    "PeriodCondition": {
+      "description": "Temporal condition (ALEF Tijdsbepaling/Periode); distinct from validity Period.",
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "period" },
+        "from": { "$ref": "#/$defs/Expression" },
+        "throughInclusive": { "$ref": "#/$defs/Expression" },
+        "periods": { "type": "array", "items": { "$ref": "#/$defs/PeriodCondition" } }
+      }
+    },
+    "RuleStatusCondition": {
+      "description": "'rule X has fired / is inconsistent'.",
+      "type": "object", "required": ["kind", "status", "rule"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "ruleStatus" },
+        "status": { "type": "string", "enum": ["fired", "inconsistent"] },
+        "rule": { "type": "string", "description": "Ref to Rule.id / RuleVersion.id." },
+        "negated": { "type": "boolean", "default": false }
+      }
+    },
+
+    "Quantifier": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["kind"], "additionalProperties": false,
+          "properties": { "kind": { "enum": ["all", "none"] } }
+        },
+        {
+          "type": "object", "required": ["kind", "mode", "count"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "count" },
+            "mode": { "type": "string", "enum": ["atLeast", "atMost", "exactly"] },
+            "count": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    },
+
+    "Predicate": {
+      "title": "Predicate",
+      "oneOf": [
+        { "$ref": "#/$defs/Comparison" },
+        { "$ref": "#/$defs/IsFilled" },
+        { "$ref": "#/$defs/HasRoleOrCharacteristic" },
+        { "$ref": "#/$defs/IsDayType" },
+        { "$ref": "#/$defs/ChecksumEleven" },
+        { "$ref": "#/$defs/IsNumericWithLength" }
+      ]
+    },
+    "Comparison": {
+      "type": "object", "required": ["kind", "operator", "value"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "comparison" },
+        "operator": { "type": "string", "enum": ["eq", "ne", "lt", "le", "gt", "ge"] },
+        "value": { "$ref": "#/$defs/Expression" }
+      }
+    },
+    "IsFilled": {
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "isFilled" },
+        "negated": { "type": "boolean", "default": false, "description": "true = is empty." }
+      }
+    },
+    "HasRoleOrCharacteristic": {
+      "type": "object", "required": ["kind", "target"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "hasRoleOrCharacteristic" },
+        "target": { "type": "string" },
+        "possessive": { "type": "boolean", "default": false },
+        "negated": { "type": "boolean", "default": false }
+      }
+    },
+    "IsDayType": {
+      "type": "object", "required": ["kind", "dayType"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "isDayType" },
+        "dayType": { "type": "string" },
+        "negated": { "type": "boolean", "default": false }
+      }
+    },
+    "ChecksumEleven": {
+      "description": "The Dutch eleven-test (BSN checksum). Kept generic; other jurisdictions plug in their own checksum predicate.",
+      "type": "object", "required": ["kind"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "checksumEleven" },
+        "negated": { "type": "boolean", "default": false }
+      }
+    },
+    "IsNumericWithLength": {
+      "type": "object", "required": ["kind", "length"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "isNumericWithLength" },
+        "length": { "type": "integer", "minimum": 0 },
+        "negated": { "type": "boolean", "default": false }
+      }
+    },
+
+    "Subject": {
+      "title": "Subject expression (navigation anchor)",
+      "description": "Navigation through the data model. Recursive: the object of a selection can itself be a path ('the X of the Y of the Z'). This object-centric navigation is ALEF's core advantage over flat field access.",
+      "oneOf": [
+        { "$ref": "#/$defs/Universal" },
+        { "$ref": "#/$defs/Reference" },
+        { "$ref": "#/$defs/AllInstances" },
+        { "$ref": "#/$defs/Selection" },
+        { "$ref": "#/$defs/SubSelection" }
+      ]
+    },
+    "Universal": {
+      "description": "'a <entityType>' — the implicit universal subject the rule ranges over. 'id' makes it addressable for a later reference.",
+      "type": "object", "required": ["kind", "entityType"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "universal" },
+        "id": { "$ref": "#/$defs/NodeId" },
+        "entityType": { "type": "string" }
+      }
+    },
+    "Reference": {
+      "description": "Back-reference to a previously named anchor (by id).",
+      "type": "object", "required": ["kind", "to"], "additionalProperties": false,
+      "properties": { "kind": { "const": "reference" }, "to": { "type": "string", "description": "Ref to Universal.id (or a variable)." } }
+    },
+    "AllInstances": {
+      "description": "'all <entityType>'.",
+      "type": "object", "required": ["kind", "entityType"], "additionalProperties": false,
+      "properties": { "kind": { "const": "all" }, "entityType": { "type": "string" } }
+    },
+    "Selection": {
+      "description": "'the <selector> of <object>'. Both read side (in expressions) and write side (Assignment.target).",
+      "type": "object", "required": ["kind", "object", "selector"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "selection" },
+        "id": { "$ref": "#/$defs/NodeId" },
+        "object": { "$ref": "#/$defs/Subject" },
+        "selector": { "$ref": "#/$defs/Selector" }
+      }
+    },
+    "SubSelection": {
+      "description": "Filtered subset: 'the <object> that <predicate>'.",
+      "type": "object", "required": ["kind", "object", "predicate"], "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "subselection" },
+        "id": { "$ref": "#/$defs/NodeId" },
+        "object": { "$ref": "#/$defs/Subject" },
+        "predicate": { "$ref": "#/$defs/Predicate" }
+      }
+    },
+    "Selector": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["kind", "name"], "additionalProperties": false,
+          "properties": {
+            "kind": { "type": "string", "enum": ["attribute", "characteristic", "role"] },
+            "name": { "type": "string", "description": "Ref to Attribute/Characteristic/Role on the entity type." }
+          }
+        },
+        {
+          "type": "object", "required": ["kind", "selectors"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "combination" },
+            "selectors": { "type": "array", "items": { "$ref": "#/$defs/Selector" } }
+          }
+        }
+      ]
+    },
+
+    "Expression": {
+      "title": "Expression",
+      "description": "Tagged with 'kind'. Scalar math/rounding/comparison folds into a single generic 'operation' node (clean engine-agnostic IR) instead of ALEF's many surface constructs; parentheses are dropped (the tree encodes grouping). Navigation paths are also expressions and may act as read values.",
+      "oneOf": [
+        { "$ref": "#/$defs/Literal" },
+        { "$ref": "#/$defs/ParameterRef" },
+        { "$ref": "#/$defs/VariableRef" },
+        { "$ref": "#/$defs/Operation" },
+        { "$ref": "#/$defs/Aggregation" },
+        { "$ref": "#/$defs/Conditional" },
+        { "$ref": "#/$defs/DateFunction" },
+        { "$ref": "#/$defs/TextConcat" },
+        { "$ref": "#/$defs/UnitConversion" },
+        { "$ref": "#/$defs/TemporalExpression" },
+        { "$ref": "#/$defs/Universal" },
+        { "$ref": "#/$defs/Reference" },
+        { "$ref": "#/$defs/AllInstances" },
+        { "$ref": "#/$defs/Selection" },
+        { "$ref": "#/$defs/SubSelection" }
+      ]
+    },
+    "Literal": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["kind", "value"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "number" },
+            "value": { "type": "string", "description": "Decimal as a string (preserve precision)." },
+            "unit": { "$ref": "#/$defs/Unit" }
+          }
+        },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "percentage" }, "value": { "type": "string" } } },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "text" }, "value": { "type": "string" } } },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "boolean" }, "value": { "type": "boolean" } } },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "date" }, "value": { "type": "string", "format": "date" } } },
+        {
+          "type": "object", "required": ["kind", "value"], "additionalProperties": false,
+          "properties": { "kind": { "const": "enumValue" }, "domain": { "type": "string" }, "value": { "type": "string" } }
+        },
+        { "description": "Explicit absence of a value.", "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "empty" } } },
+        { "description": "The date being calculated for (context literal).", "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "calculationDate" } } },
+        { "description": "The year being calculated for (context literal).", "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "calculationYear" } } }
+      ]
+    },
+    "ParameterRef": {
+      "type": "object", "required": ["kind", "parameter"], "additionalProperties": false,
+      "properties": { "id": { "$ref": "#/$defs/NodeId" }, "kind": { "const": "parameter" }, "parameter": { "type": "string" } }
+    },
+    "VariableRef": {
+      "type": "object", "required": ["kind", "variable"], "additionalProperties": false,
+      "properties": { "id": { "$ref": "#/$defs/NodeId" }, "kind": { "const": "variable" }, "variable": { "type": "string" } }
+    },
+    "Operation": {
+      "description": "Generic scalar operation IR (RegelRecht-inspired). Covers ALEF's arithmetic, bounding (min/max), rounding, abs/sqrt, power and percentageOf. VerminderdMet desugars to max(subtract,0); parentheses are implicit in the operand tree.",
+      "type": "object", "required": ["kind", "op", "operands"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "operation" },
+        "op": {
+          "type": "string",
+          "enum": ["add", "subtract", "multiply", "divide", "power", "min", "max",
+                   "abs", "sqrt", "round", "ceil", "floor", "percentageOf"]
+        },
+        "operands": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Expression" } },
+        "precision": { "type": "integer", "minimum": 0, "description": "For round/ceil/floor: decimal places." }
+      }
+    },
+    "Aggregation": {
+      "description": "Aggregate over a set of instances or over dimension labels (object-centric; ALEF advantage).",
+      "type": "object", "required": ["kind", "function", "over"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "aggregation" },
+        "function": { "type": "string", "enum": ["sum", "count", "min", "max", "average"] },
+        "over": { "$ref": "#/$defs/Expression" }
+      }
+    },
+    "Conditional": {
+      "description": "Case expression (RegelRecht IF): first matching 'when' yields 'then', else 'else'.",
+      "type": "object", "required": ["kind", "cases"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "conditional" },
+        "cases": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "required": ["when", "then"], "additionalProperties": false,
+            "properties": { "when": { "$ref": "#/$defs/Condition" }, "then": { "$ref": "#/$defs/Expression" } }
+          }
+        },
+        "else": { "$ref": "#/$defs/Expression" }
+      }
+    },
+    "DateFunction": {
+      "type": "object", "required": ["kind", "function"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "dateFunction" },
+        "function": { "type": "string", "enum": ["dateDiff", "dateElement", "dateFromParts", "age", "easterSunday"] },
+        "arguments": { "type": "array", "items": { "$ref": "#/$defs/Expression" } }
+      }
+    },
+    "TextConcat": {
+      "type": "object", "required": ["kind", "parts"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "textConcat" },
+        "parts": { "type": "array", "items": { "$ref": "#/$defs/Expression" } }
+      }
+    },
+    "UnitConversion": {
+      "type": "object", "required": ["kind", "argument", "toUnit"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "unitConversion" },
+        "argument": { "$ref": "#/$defs/Expression" },
+        "toUnit": { "$ref": "#/$defs/Unit" }
+      }
+    },
+    "TemporalExpression": {
+      "description": "Operators over timeline-valued slots (ALEF .tijd): timeProportional, durationWhere, total, currentDay.",
+      "type": "object", "required": ["kind", "op"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "kind": { "const": "temporal" },
+        "op": { "type": "string", "enum": ["timeProportional", "durationWhere", "total", "currentDay"] },
+        "expression": { "$ref": "#/$defs/Expression" },
+        "condition": { "$ref": "#/$defs/Condition" }
+      }
+    },
+
+    "Annotations": {
+      "title": "Annotation overlay",
+      "description": "Side-table keyed by NodeId, decoupled from the executable tree. Carries comments, source-law references, metatags, and the natural-language rendering trace (origin/target) used to show values in context.",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/Annotation" }
+    },
+    "Annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "comment": { "type": "string" },
+        "source": {
+          "type": "array",
+          "description": "References to the source legislation.",
+          "items": {
+            "type": "object", "required": ["kind"], "additionalProperties": false,
+            "properties": {
+              "kind": { "type": "string", "enum": ["structured", "free"] },
+              "law": { "type": "string" },
+              "reference": { "type": "string" }
+            }
+          }
+        },
+        "metatags": {
+          "type": "array",
+          "items": {
+            "type": "object", "required": ["name"], "additionalProperties": false,
+            "properties": { "name": { "type": "string" }, "value": { "type": "string" } }
+          }
+        },
+        "rendering": { "$ref": "#/$defs/Rendering" }
+      }
+    },
+    "Rendering": {
+      "title": "Natural-language rendering (segment tree)",
+      "description": "Segment tree mirroring a NodeRendering tree: text segments and node segments carrying 'origin' (value target) and optional 'target' (navigation target). A UI injects each origin's evaluated value from an evaluation trace, e.g. 'the bmi [20.0]'.",
+      "type": "object",
+      "required": ["segments"],
+      "additionalProperties": false,
+      "properties": {
+        "segments": { "type": "array", "items": { "$ref": "#/$defs/Segment" } },
+        "text": { "type": "string", "description": "Optional flattened rendering." },
+        "language": { "type": "string", "default": "en" }
+      }
+    },
+    "Segment": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["text"], "additionalProperties": false,
+          "properties": { "text": { "type": "string" } }
+        },
+        {
+          "type": "object", "required": ["origin"], "additionalProperties": false,
+          "properties": {
+            "origin": { "$ref": "#/$defs/NodeId" },
+            "target": { "$ref": "#/$defs/NodeId" },
+            "text": { "type": "string" },
+            "segments": { "type": "array", "items": { "$ref": "#/$defs/Segment" } }
+          }
+        }
+      ]
+    }
+  }
+}
