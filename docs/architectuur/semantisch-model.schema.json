@@ -441,7 +441,20 @@
             "aandeel": { "$ref": "#/$defs/Selectie" },
             "rato": { "$ref": "#/$defs/Selectie" },
             "maxAanspraak": { "$ref": "#/$defs/Selectie" },
-            "decimalen": { "type": "integer" }
+            "decimalen": { "type": "integer" },
+            "sorteercriteria": {
+              "type": "array",
+              "description": "SorteerCriterium — volgorde van bedeling bij restverdeling.",
+              "items": {
+                "type": "object",
+                "required": ["selectie"],
+                "additionalProperties": false,
+                "properties": {
+                  "selectie": { "$ref": "#/$defs/Selectie" },
+                  "richting": { "type": "string", "enum": ["oplopend", "aflopend"], "default": "oplopend" }
+                }
+              }
+            }
           }
         }
       }
@@ -473,7 +486,9 @@
       "oneOf": [
         { "$ref": "#/$defs/EnkeleVoorwaarde" },
         { "$ref": "#/$defs/SamengesteldeVoorwaarde" },
-        { "$ref": "#/$defs/Uniciteit" }
+        { "$ref": "#/$defs/Uniciteit" },
+        { "$ref": "#/$defs/PeriodeConditie" },
+        { "$ref": "#/$defs/Regelstatus" }
       ]
     },
     "EnkeleVoorwaarde": {
@@ -511,6 +526,32 @@
         "selecties": { "type": "array", "items": { "$ref": "#/$defs/Selectie" } }
       }
     },
+    "PeriodeConditie": {
+      "description": "regelspraak.tijd Tijdsbepaling/Periode — een periodevoorwaarde; 'van'/'totEnMet' begrenzen de tijd. 'periodes' voor MultiPeriode (meerdere deelperiodes). Let op: los van Geldigheidsperiode (versiegeldigheid).",
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "periode" },
+        "van": { "$ref": "#/$defs/Expressie" },
+        "totEnMet": { "$ref": "#/$defs/Expressie" },
+        "periodes": { "type": "array", "items": { "$ref": "#/$defs/PeriodeConditie" }, "description": "MultiPeriode: meerdere deelperiodes." }
+      }
+    },
+    "Regelstatus": {
+      "description": "regelspraak RegelConditie — 'de <regel> is afgevuurd/inconsistent'. Verwijst naar een regel(versie).",
+      "type": "object",
+      "required": ["soort", "status", "regel"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "regelstatus" },
+        "status": { "type": "string", "enum": ["afgevuurd", "inconsistent"] },
+        "regel": { "type": "string", "description": "Verwijzing naar Regel.id / RegelVersie.id." },
+        "ontkend": { "type": "boolean", "default": false }
+      }
+    },
 
     "Quantificatie": {
       "oneOf": [
@@ -536,7 +577,8 @@
         { "$ref": "#/$defs/IsGevuld" },
         { "$ref": "#/$defs/RolOfKenmerkCheck" },
         { "$ref": "#/$defs/IsDagsoort" },
-        { "$ref": "#/$defs/Elfproef" }
+        { "$ref": "#/$defs/Elfproef" },
+        { "$ref": "#/$defs/IsNumeriekMetLengte" }
       ]
     },
     "Vergelijking": {
@@ -590,6 +632,18 @@
       "properties": {
         "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "elfproef" },
+        "ontkend": { "type": "boolean", "default": false }
+      }
+    },
+    "IsNumeriekMetLengte": {
+      "description": "IsNumeriekMetLengte — 'is numeriek met (exact) <lengte> cijfers'.",
+      "type": "object",
+      "required": ["soort", "lengte"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "isNumeriekMetLengte" },
+        "lengte": { "type": "integer", "minimum": 0 },
         "ontkend": { "type": "boolean", "default": false }
       }
     },
@@ -696,6 +750,13 @@
         { "$ref": "#/$defs/TekstExpressie" },
         { "$ref": "#/$defs/DatumFunctie" },
         { "$ref": "#/$defs/Tijdsoperator" },
+        { "$ref": "#/$defs/Concatenatie" },
+        { "$ref": "#/$defs/Unair" },
+        { "$ref": "#/$defs/PercentageVan" },
+        { "$ref": "#/$defs/VerminderdMet" },
+        { "$ref": "#/$defs/EenheidConversie" },
+        { "$ref": "#/$defs/DeDag" },
+        { "$ref": "#/$defs/Totaal" },
         { "$ref": "#/$defs/Universeel" },
         { "$ref": "#/$defs/Referentie" },
         { "$ref": "#/$defs/Alle" },
@@ -738,6 +799,21 @@
             "domein": { "type": "string" },
             "waarde": { "type": "string" }
           }
+        },
+        {
+          "description": "Leeg — expliciet 'geen waarde' (regelspraak.Leeg, implements LValue).",
+          "type": "object", "required": ["soort"], "additionalProperties": false,
+          "properties": { "soort": { "const": "leeg" } }
+        },
+        {
+          "description": "Rekendatum — de datum waarop wordt gerekend (context-literal).",
+          "type": "object", "required": ["soort"], "additionalProperties": false,
+          "properties": { "soort": { "const": "rekendatum" } }
+        },
+        {
+          "description": "Rekenjaar — het jaar waarop wordt gerekend (context-literal).",
+          "type": "object", "required": ["soort"], "additionalProperties": false,
+          "properties": { "soort": { "const": "rekenjaar" } }
         }
       ]
     },
@@ -828,6 +904,73 @@
         "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "tijdsoperator" },
         "operator": { "type": "string", "enum": ["tijdsevenredig", "tijdsduurDat", "conditioneel"] },
+        "expressie": { "$ref": "#/$defs/Expressie" },
+        "conditie": { "$ref": "#/$defs/Conditie" }
+      }
+    },
+    "Concatenatie": {
+      "description": "gegevensspraak.Concatenatie — tekst/lijst-aaneenschakeling van meerdere operanden.",
+      "type": "object", "required": ["soort", "operanden"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "concatenatie" },
+        "operanden": { "type": "array", "items": { "$ref": "#/$defs/Expressie" } }
+      }
+    },
+    "Unair": {
+      "description": "Unaire rekenfunctie: AbsoluteWaarde, Worteltrekken.",
+      "type": "object", "required": ["soort", "functie", "argument"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "unair" },
+        "functie": { "type": "string", "enum": ["absoluteWaarde", "worteltrekken"] },
+        "argument": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+    "PercentageVan": {
+      "description": "PercentageVanExpressie — 'X% van Y'.",
+      "type": "object", "required": ["soort", "percentage", "grondslag"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "percentageVan" },
+        "percentage": { "$ref": "#/$defs/Expressie" },
+        "grondslag": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+    "VerminderdMet": {
+      "description": "VerminderdMet — aftrekking met een niet-negatieve ondergrens (klemt op 0).",
+      "type": "object", "required": ["soort", "links", "rechts"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "verminderdMet" },
+        "links": { "$ref": "#/$defs/Expressie" },
+        "rechts": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+    "EenheidConversie": {
+      "description": "EenheidConversie — waarde omrekenen naar een doeleenheid.",
+      "type": "object", "required": ["soort", "argument", "naarEenheid"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "eenheidConversie" },
+        "argument": { "$ref": "#/$defs/Expressie" },
+        "naarEenheid": { "$ref": "#/$defs/Eenheid" }
+      }
+    },
+    "DeDag": {
+      "description": "regelspraak.tijd DeDag — 'de dag' binnen een tijdsafhankelijke context (de dag waarop wordt geevalueerd).",
+      "type": "object", "required": ["soort"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "deDag" }
+      }
+    },
+    "Totaal": {
+      "description": "regelspraak.tijd Totaal — sommatie van een tijdlijn-waardige expressie over de tijd, optioneel begrensd met een conditie.",
+      "type": "object", "required": ["soort", "expressie"], "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
+        "soort": { "const": "totaal" },
         "expressie": { "$ref": "#/$defs/Expressie" },
         "conditie": { "$ref": "#/$defs/Conditie" }
       }

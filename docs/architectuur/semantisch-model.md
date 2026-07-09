@@ -317,12 +317,43 @@ paren op node-id. Zie het validatie-snippet hieronder, dat naast schema-validati
 de kruisverwijzingen tussen model, rendering en trace controleert en de zin met
 waarden rendert.
 
+### Dekking (gemeten tegen de solutions)
+
+Om te sturen op wat er écht toe doet, telt
+**[`dekking-scan.py`](./dekking-scan.py)** het gebruik van elk concept in alle 569
+`solutions/**/*.mps`-modellen en verdeelt ze over drie emmers. Draaien:
+
+```bash
+python3 docs/architectuur/dekking-scan.py
+```
+
+Huidige uitkomst (569 modellen, 225 concepten, ~108k node-gebruiken):
+
+| Emmer | Concepten | Gebruiken | Aandeel |
+|---|---:|---:|---:|
+| **Gedekt** door het schema | 160 | 95.188 | **87,8 %** |
+| **Buiten scope / genormaliseerd** | 62 | 13.175 | 12,2 % |
+| **Nog te doen** | 3 | 3 | 0,0 % |
+
+*Buiten scope* is bewust: beslistabellen (`Bt*`) normaliseren naar gewone `Regel`s;
+de servicegrens/berichten (`servicespraak`, service-tests) is marshalling, geen
+regelsemantiek; en linguïstiek/opmaak (`Werkwoord`, `Koptekst`) hoort in de
+annotatie-overlay, niet in de kern. *Nog te doen* is een verwaarloosbare staart van
+3 concepten die elk één keer voorkomen (`ListType`, `MultiExpressie`,
+`PredicaatMetTijdsbepaling`).
+
+Op basis van deze scan is het schema uitgebreid met de veelgebruikte constructies die
+eerst ontbraken: `Leeg`/`Rekendatum`/`Rekenjaar` (literals), `Concatenatie`, unaire
+functies (`AbsoluteWaarde`, `Worteltrekken`), `PercentageVan`, `VerminderdMet`,
+`EenheidConversie`, `DeDag`, `Totaal`, de tijd-`Periode`voorwaarde, `Regelstatus`
+(is-afgevuurd/inconsistent), `IsNumeriekMetLengte` en `SorteerCriterium`.
+
 ### Volgende stap
 
-Het schema dekt nu de kern-constructies (acht actiesoorten, condities/predicaten,
-navigatie, ~een dozijn expressiesoorten, tijd-operatoren). Logische uitbreidingen:
-de resterende expressie- en predicaatsoorten uit `regelspraak.structure` aanvullen,
-de `.tijd`-laag (tijdlijn-waardige slots, periodes) verder uitmodelleren, en meer
-solutions door de validator halen. Gebruik daarbij de `L*`-interfaces in
-`interpreter.debug` als sanity-check: zij markeren welke concepten de huidige
-interpreter al als uitvoerbaar beschouwt.
+Met 87,8 % concept-dekking is het schema klaar voor de echte test: een
+**AST → semantisch-model transformer** die een `.mps`-model automatisch omzet naar
+JSON conform dit schema, gevalideerd tegen meerdere solutions (niet alleen het
+handmatige BMI-voorbeeld). De `Bt*`-normalisatie en de `.tijd`-details
+(tijdlijn-waardige slots) zijn dan de eerste dingen om end-to-end te bewijzen.
+Gebruik de `L*`-interfaces in `interpreter.debug` als sanity-check: zij markeren welke
+concepten de huidige interpreter al als uitvoerbaar beschouwt.
