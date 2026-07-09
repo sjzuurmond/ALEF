@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core rule model — interpreter demo</title>
+<style>
+  :root { --ink: #1b2430; --muted: #5b6672; --accent: #175186; --bg: #f6f7f8; --line: #dde2e8; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e4e9ef; --muted: #9aa6b2; --accent: #82b4e4; --bg: #12161c; --line: #2a323d; }
+  }
+  body { margin: 0 auto; max-width: 46rem; padding: 2rem 1.25rem 4rem; background: var(--bg); color: var(--ink);
+         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  h1 { font-size: 1.5rem; border-bottom: 3px solid var(--accent); padding-bottom: .5rem; }
+  h2 { font-size: 1.05rem; margin-top: 2rem; }
+  .sentence { background: color-mix(in srgb, var(--accent) 8%, transparent); border-left: 3px solid var(--accent);
+              padding: .75rem 1rem; margin: .75rem 0; }
+  .sentence b { color: var(--accent); }
+  pre { background: color-mix(in srgb, var(--ink) 6%, transparent); border: 1px solid var(--line);
+        padding: .75rem 1rem; overflow-x: auto; font-size: .8rem; }
+  .err { color: #b4571e; }
+  small { color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>Core rule model — interpreter demo</h1>
+<p><small>Loads the example models and test cases, interprets them in the browser, and renders
+each rule's sentence with the evaluated values injected (serve this directory over HTTP,
+e.g. <code>python3 -m http.server</code> in <code>sandbox/semantisch-model/</code>).</small></p>
+<div id="out">Running…</div>
+<script type="module">
+import { interpret } from './interpreter.mjs';
+import { renderWithValues } from './render.mjs';
+
+const out = document.getElementById('out');
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const pretty = (s) => esc(s).replace(/\[([^\]]+)\]/g, '<b>[$1]</b>');
+
+const demos = [
+  { title: 'BMI', model: '../core-model.example.json', testCase: './bmi.testcase.json',
+    instance: 'person#Jan', rules: ['rule.bmi.v1'] },
+  { title: 'Income over time', model: '../core-model.temporal-example.json', testCase: './income.testcase.json',
+    instance: 'employee#1', rules: ['rule.annualIncome.v1'] },
+];
+
+const json = async (u) => (await fetch(u)).json();
+let html = '';
+for (const d of demos) {
+  try {
+    const model = await json(d.model);
+    const trace = interpret(model, await json(d.testCase));
+    html += `<h2>${esc(d.title)}</h2>`;
+    for (const r of d.rules)
+      html += `<div class="sentence">${pretty(renderWithValues(model, trace, d.instance, r) ?? '(no rendering)')}</div>`;
+    html += `<details><summary><small>evaluation trace</small></summary><pre>${esc(JSON.stringify(trace, null, 2))}</pre></details>`;
+  } catch (e) {
+    html += `<h2>${esc(d.title)}</h2><p class="err">${esc(String(e))}</p>`;
+  }
+}
+out.innerHTML = html;
+</script>
+</body>
+</html>

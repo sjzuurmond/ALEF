@@ -19,6 +19,7 @@ trial: related to, but deliberately not identical to,
 | [`core-model.example.json`](./core-model.example.json) | BMI example (from `solutions/Beslistabellen_Test`) |
 | [`core-model.example.trace.json`](./core-model.example.trace.json) | Trace of one BMI test case, paired with the example |
 | [`core-model.temporal-example.json`](./core-model.temporal-example.json) | Temporal example: income timeline + mid-year parameter change |
+| [`interpreter/`](./interpreter/) | Reference interpreter (plain ES modules; runs in browsers and Node) |
 
 ## Design principles
 
@@ -141,9 +142,45 @@ Semantic invariants JSON Schema cannot express (check with a linter): every
 resolve to an `id` (or `universal` anchor) in the model; trace `entityType`s must
 exist in the data model.
 
+## The interpreter
+
+[`interpreter/`](./interpreter/) is a minimal reference interpreter for the core:
+plain ES modules, zero dependencies, runs unmodified in browsers and Node. Its shape
+follows ALEF's Merlin runtime (a *universe* of instances, relations and parameter
+sets, evaluated against a working date, with a recursion cap on fixpoint iteration)
+and RegelRecht's engine (deterministic evaluation that returns a result *with an
+explanation trail* — here, the emitted `evaluation-trace`).
+
+| File | Role |
+|---|---|
+| `interpreter.mjs` | The engine: navigation, expressions, conditions, actions, fixpoint loop, trace |
+| `decimal.mjs` | Exact fixed-point decimal arithmetic on `BigInt` (no floats for money) |
+| `render.mjs` | Injects trace values into rendering segments: “the bmi **[20.0]**” |
+| `run-demo.mjs` | Node runner for both examples (`--trace` prints full traces) |
+| `index.html` | Browser demo (serve this directory: `python3 -m http.server`) |
+| `*.testcase.json` | Test inputs: instances + slot values + calculation date |
+
+```bash
+node sandbox/semantisch-model/interpreter/run-demo.mjs
+# The bmi [20.0] of a Person equals the weight of the Person [80 kg] divided by
+# (the height of the Person [2.00 m] times the height of the Person [2.00 m]), ...
+# The annualIncome [37200 euro] of an Employee equals the total over time of ...
+```
+
+Implemented: all literals (incl. `timeVarying`), parameters (set validity + time
+cases), navigation (universal/reference/all/selection/subselection, role
+navigation), the operation IR, aggregation, conditional, date functions (incl.
+`easterSunday`), text concat, unit conversion, `temporal.total` and `currentDay`
+over timeline values, all condition kinds, predicates (incl. `elevenProof`
+checksum), and the actions `assignment` (with `initial`), `setCharacteristic`,
+`createObject`, `createFact`, `consistencyCheck` and a basic `distribution`.
+Deliberately unsupported (clear error): `timeProportional`, `durationWhere`,
+`isDayType`/`dayTypeDefinition`, `timelineStart` runtime semantics, non-elevenProof
+checksums, and compound-unit algebra (multiplicative operations drop units; use
+`unitConversion` to reintroduce one).
+
 ## Next step
 
-An **interpreter** over this core: load a model + test case, run the evaluation
-cycle above, emit an `evaluation-trace`, and render the rule text with injected
-values. After that, an AST → core transformer from the MPS models would replace the
-hand-written examples.
+An **AST → core transformer** from the MPS models, so real solutions replace the
+hand-written examples — with the interpreter's traces compared against ALEF's own
+test expectations (`UitvoerVoorspelling`) as the correctness oracle.

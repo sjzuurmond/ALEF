@@ -1,0 +1,19 @@
+{
+  "name": "Employee — raise per July",
+  "calculationDate": "2026-12-31",
+  "instances": [
+    {
+      "id": "employee#1",
+      "entityType": "Employee",
+      "slots": {
+        "income": {
+          "kind": "timeline",
+          "periods": [
+            { "from": "2026-01-01", "to": "2026-07-01", "value": { "kind": "number", "value": "3000.00", "unit": "euro" } },
+            { "from": "2026-07-01", "to": "2027-01-01", "value": { "kind": "number", "value": "3200.00", "unit": "euro" } }
+          ]
+        }
+      }
+    }
+  ]
+}

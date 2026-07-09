@@ -1,0 +1,15 @@
+{
+  "name": "Jan — healthy weight",
+  "calculationDate": "2026-01-01",
+  "instances": [
+    {
+      "id": "person#Jan",
+      "entityType": "Person",
+      "name": "Jan",
+      "slots": {
+        "weight": { "kind": "number", "value": "80", "unit": "kg" },
+        "height": { "kind": "number", "value": "2.00", "unit": "m" }
+      }
+    }
+  ]
+}
