@@ -52,6 +52,7 @@
                     "soort": "haakjes",
                     "waarde": {
                       "soort": "rekenkundig",
+                      "id": "expr.deling",
                       "operator": "/",
                       "links": {
                         "soort": "selectie",

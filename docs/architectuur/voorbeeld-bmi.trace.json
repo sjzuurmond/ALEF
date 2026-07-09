@@ -11,6 +11,7 @@
       "sel.gewicht": { "soort": "getal", "waarde": "80" },
       "sel.lengte.1": { "soort": "getal", "waarde": "2,00" },
       "sel.lengte.2": { "soort": "getal", "waarde": "2,00" },
+      "expr.deling": { "soort": "getal", "waarde": "20" },
       "sel.bmi": { "soort": "getal", "waarde": "20,0" },
       "sel.categorie": { "soort": "enum", "domein": "BMI categorie", "waarde": "Gezond gewicht" }
     }

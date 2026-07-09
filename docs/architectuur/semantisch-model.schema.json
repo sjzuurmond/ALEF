@@ -337,6 +337,7 @@
             "required": ["naam", "waarde"],
             "additionalProperties": false,
             "properties": {
+              "id": { "$ref": "#/$defs/NodeId" },
               "naam": { "type": "string" },
               "waarde": { "$ref": "#/$defs/Expressie" }
             }
@@ -481,6 +482,7 @@
       "required": ["soort", "expressie", "predicaat"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "enkel" },
         "quantificatie": { "$ref": "#/$defs/Quantificatie" },
         "expressie": { "$ref": "#/$defs/Expressie" },
@@ -492,6 +494,7 @@
       "required": ["soort", "logica", "subcondities"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "samengesteld" },
         "logica": { "type": "string", "enum": ["en", "of", "nietAlle", "geen"] },
         "quantificatie": { "$ref": "#/$defs/Quantificatie" },
@@ -503,6 +506,7 @@
       "required": ["soort", "selecties"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "uniciteit" },
         "selecties": { "type": "array", "items": { "$ref": "#/$defs/Selectie" } }
       }
@@ -540,6 +544,7 @@
       "required": ["soort", "operator", "rechts"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "vergelijking" },
         "operator": { "type": "string", "enum": ["<", "<=", "=", "<>", ">=", ">"] },
         "rechts": { "$ref": "#/$defs/Expressie" }
@@ -550,6 +555,7 @@
       "required": ["soort"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "isGevuld" },
         "ontkend": { "type": "boolean", "default": false, "description": "true = IsLeeg." }
       }
@@ -559,6 +565,7 @@
       "required": ["soort", "rolOfKenmerk"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "rolOfKenmerk" },
         "rolOfKenmerk": { "type": "string" },
         "bezittelijk": { "type": "boolean", "default": false },
@@ -570,6 +577,7 @@
       "required": ["soort", "dagsoort"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "isDagsoort" },
         "dagsoort": { "type": "string" },
         "ontkend": { "type": "boolean", "default": false }
@@ -580,6 +588,7 @@
       "required": ["soort"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "elfproef" },
         "ontkend": { "type": "boolean", "default": false }
       }
@@ -613,6 +622,7 @@
       "required": ["soort", "naar"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "referentie" },
         "naar": { "type": "string", "description": "Verwijzing naar Universeel.id (of een variabele)." }
       }
@@ -623,6 +633,7 @@
       "required": ["soort", "objecttype"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "alle" },
         "objecttype": { "type": "string" }
       }
@@ -645,6 +656,7 @@
       "required": ["soort", "object", "predicaat"],
       "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "subselectie" },
         "object": { "$ref": "#/$defs/Pad" },
         "predicaat": { "$ref": "#/$defs/Predicaat" }
@@ -732,16 +744,17 @@
 
     "ParameterRef": {
       "type": "object", "required": ["soort", "parameter"], "additionalProperties": false,
-      "properties": { "soort": { "const": "parameter" }, "parameter": { "type": "string" } }
+      "properties": { "id": { "$ref": "#/$defs/NodeId" }, "soort": { "const": "parameter" }, "parameter": { "type": "string" } }
     },
     "VariabeleRef": {
       "type": "object", "required": ["soort", "variabele"], "additionalProperties": false,
-      "properties": { "soort": { "const": "variabele" }, "variabele": { "type": "string" } }
+      "properties": { "id": { "$ref": "#/$defs/NodeId" }, "soort": { "const": "variabele" }, "variabele": { "type": "string" } }
     },
     "Rekenkundig": {
       "description": "ArithmetischeExpressie — binair.",
       "type": "object", "required": ["soort", "operator", "links", "rechts"], "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "rekenkundig" },
         "operator": { "type": "string", "enum": ["+", "-", "*", "/", "^"] },
         "links": { "$ref": "#/$defs/Expressie" },
@@ -750,11 +763,12 @@
     },
     "Haakjes": {
       "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
-      "properties": { "soort": { "const": "haakjes" }, "waarde": { "$ref": "#/$defs/Expressie" } }
+      "properties": { "id": { "$ref": "#/$defs/NodeId" }, "soort": { "const": "haakjes" }, "waarde": { "$ref": "#/$defs/Expressie" } }
     },
     "Afronden": {
       "type": "object", "required": ["soort", "afTeRonden", "decimalen"], "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "afronden" },
         "afTeRonden": { "$ref": "#/$defs/Expressie" },
         "decimalen": { "type": "integer", "minimum": 0 },
@@ -765,6 +779,7 @@
       "description": "BegrensdeExpressie — waarde geknipt tussen grenzen.",
       "type": "object", "required": ["soort", "argument", "grenzen"], "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "begrensd" },
         "argument": { "$ref": "#/$defs/Expressie" },
         "grenzen": {
@@ -783,6 +798,7 @@
       "description": "Aggregatie/DimensieAggregatie over een lijst of dimensielabels.",
       "type": "object", "required": ["soort", "functie", "lijst"], "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "aggregatie" },
         "functie": { "type": "string", "enum": ["som", "aantal", "minimum", "maximum", "gemiddelde"] },
         "lijst": { "$ref": "#/$defs/Expressie" }
@@ -791,6 +807,7 @@
     "TekstExpressie": {
       "type": "object", "required": ["soort", "delen"], "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "tekstExpressie" },
         "delen": { "type": "array", "items": { "$ref": "#/$defs/Expressie" } }
       }
@@ -798,6 +815,7 @@
     "DatumFunctie": {
       "type": "object", "required": ["soort", "functie"], "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "datumFunctie" },
         "functie": { "type": "string", "enum": ["datumTijdVerschil", "datumElementUit", "datumMetJaarMaandDag", "eerstePaasdag"] },
         "argumenten": { "type": "array", "items": { "$ref": "#/$defs/Expressie" } }
@@ -807,6 +825,7 @@
       "description": "regelspraak.tijd — operatoren over tijdlijn-waardige slots.",
       "type": "object", "required": ["soort", "operator"], "additionalProperties": false,
       "properties": {
+        "id": { "$ref": "#/$defs/NodeId" },
         "soort": { "const": "tijdsoperator" },
         "operator": { "type": "string", "enum": ["tijdsevenredig", "tijdsduurDat", "conditioneel"] },
         "expressie": { "$ref": "#/$defs/Expressie" },

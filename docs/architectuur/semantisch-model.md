@@ -228,6 +228,17 @@ PY
   `OnderwerpRef` terugverwijst).
 - **Getallen** zijn strings (bv. `"18,5"`) om decimale precisie en de Nederlandse
   komma-notatie te behouden.
+- **`id` op alles wat een waarde oplevert.** Elke node die tot een waarde evalueert
+  mag een optioneel `id` dragen, zodat de geëvalueerde waarde per testrun te tonen is
+  (rendering `origin` + evaluatie-trace). Dat is de hele `Expressie`-familie
+  (`Selectie`, `Rekenkundig`, `Afronden`, `Aggregatie`, `ParameterRef`, … en de
+  navigatie-ankers), plus de boolean-opleverende `Conditie`/`Predicaat` (ALEF kleurt
+  die groen/rood) en gebonden `Variabele`n. Deze verzameling valt samen met de
+  `L*`/`LValue`-laag die `interpreter.debug` volgt. Bewust géén `id`: `Literal`s (hun
+  waarde is zichzelf) en `Actie`s (effecten, geen waarde; het resultaat van een
+  `Gelijkstelling` is de waarde van zijn `doel`-`Selectie`, en consistentie-oordelen
+  hangen aan het regel-id). Id's zijn optioneel: ken ze alleen toe waar je een
+  verwijzing of waarde-uitlezing nodig hebt.
 - Weggelaten: editor-scaffolding, Nederlandse grammatica (`ITaalkundig`),
   testdekking (`ICoverageArc`) en generatie-only helpers — conform het
   keep/drop-filter hierboven.
