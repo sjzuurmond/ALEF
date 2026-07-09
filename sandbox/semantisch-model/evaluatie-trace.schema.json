@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sjzuurmond/ALEF/docs/architectuur/evaluatie-trace.schema.json",
+  "$id": "https://github.com/sjzuurmond/ALEF/sandbox/semantisch-model/evaluatie-trace.schema.json",
   "title": "ALEF evaluatie-trace",
   "description": "Runtime-waarden van EEN uitvoering van een semantisch regelmodel tegen EEN testgeval (instantiedata + rekendatum). Zijartefact, los van het model: waarden zijn gesleuteld op (instantie, node-id), waarbij node-id verwijst naar een 'id' in het model (semantisch-model.schema.json). Dit is de tegenhanger van de Debug*-laag (interpreter.debug / interpreter.timed.debug) die ALEF's eigen interpreter produceert. Paart met de rendering-segmenten uit het model via node-id (de linguistics 'origin'), zodat een UI waarden inline kan tonen, bv. 'de bmi [20,0]'.",
   "type": "object",
