@@ -33,7 +33,7 @@ this tool has ever seen.
 | `SNode` | one AST node (an instance of some concept) | a **vertex** |
 | `SModel` | a model (a set of root `SNode`s) | an optional **vertex** whose children are the roots |
 | `SModule` | a language/solution/devkit (a set of models) | not modelled directly; used only to enumerate `SModel`s |
-| `SConcept` / `SAbstractConcept` | the node's concept (e.g. `ConceptDeclaration`, `ActieIndienVoorwaarde`) | the vertex's `concept` / `conceptFqn` attributes |
+| `SConcept` / `SAbstractConcept` | the node's concept (e.g. `ConceptDeclaration`, or any concept declared in a project's own languages) | the vertex's `concept` / `conceptFqn` attributes |
 | `SContainmentLink` | the *role* a child is held under (e.g. `items`, `method`, `linkDeclaration`) | the **role** label on a containment edge |
 | `SReference` | one resolved-or-not link from a node to a target node | a **reference edge** |
 | `SReferenceLink` | the *role* a reference plays (e.g. `target`, `extends`, `concept`) | the **role** label on a reference edge |
@@ -53,10 +53,10 @@ method calls in `MpsGraphExporter`:
   references — two separate loops in `visit(...)`, producing two edge kinds.
 * **Link vs. link declaration.** `SContainmentLink`/`SReferenceLink` are
   *runtime* handles — "the `items` child-role of concept `Root`, right now."
-  They are produced by MPS's language runtime *from* `ChildDeclaration` /
-  `ReferenceLinkDeclaration` nodes that live in a language's `structure.mps`
-  aspect model, which is itself just ordinary node/child/reference data
-  (see below). The exporter only ever touches the runtime handles — it asks
+  MPS produces them from `ChildDeclaration` / `ReferenceLinkDeclaration`
+  nodes that live in a language's `structure.mps` aspect model — itself just
+  an ordinary MPS model, walkable by this same exporter like any other. The
+  exporter only ever touches the runtime handles — it asks
   `node.getContainmentLink().getName()`, never the declaration nodes — which
   is what keeps it independent of any specific language.
 
@@ -86,21 +86,6 @@ isn't part of the export, or that are currently unresolved. The offline
 persistence-based tool gets this "for free" by construction (a `<ref
 to="idx:id">` in the XML is already just an address); `getTargetNodeReference()`
 is how the live-model exporter gets the same non-resolving behaviour.
-
-## Why this explains the language-vs-solution question
-
-A structure model (`languages/*/languageModels/structure.mps`) is, at the
-Open API level, a model like any other: its root `SNode`s happen to have
-concept `ConceptDeclaration`, their children happen to have concept
-`LinkDeclaration`/`PropertyDeclaration`, and their references happen to point
-at other concepts via a link literally named `extends`. Nothing about
-`getChildren()` or `getReferences()` changes — the *meaning* of "child" and
-"reference" here is "this concept declares this link" rather than "this
-business object contains this other business object," but the shape the
-exporter walks is identical. That's the bootstrapping property mentioned in
-the solution README: `jetbrains.mps.lang.structure` describes itself (and
-every other language) using the same node/child/reference primitives it makes
-available, through this same Open API, to describe everything else.
 
 ## Further reading
 

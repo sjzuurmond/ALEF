@@ -81,12 +81,3 @@ code, ready to be realised in MPS.
 
 Once the action exists, extend to more formats by pasting another `GraphSink`
 implementation and adding it to the action's sink list.
-
-## Why not MPS *generators*?
-
-MPS "generators" are template-based, per-language model-to-model
-transformations (ending in TextGen). A *generic* "any AST → graph" export is not
-expressible that way without a target graph language plus per-language mapping
-rules. The reflective Open API traversal here is the right tool; the
-"generator per format" split (one `GraphSink` per output) gives the same
-pluggability people want from generators, at the output stage.
