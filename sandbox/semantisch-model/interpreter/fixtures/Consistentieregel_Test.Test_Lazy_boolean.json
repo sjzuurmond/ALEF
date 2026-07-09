@@ -1,0 +1,641 @@
+{
+ "model": {
+  "name": "Test Lazy boolean",
+  "dataModel": {
+   "entityTypes": [
+    {
+     "name": "OT ALEF3411 Formulier",
+     "attributes": [
+      {
+       "name": "veld1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "maximum1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "veld2",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "veld3",
+       "type": {
+        "kind": "boolean"
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "lege-velden_toestaan"
+      },
+      {
+       "name": "veld1ofvel2"
+      }
+     ]
+    },
+    {
+     "name": "OT ALEF3411 Persoon",
+     "attributes": [
+      {
+       "name": "inkomen",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "attr met spaties",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "OT_ALEF3437",
+     "attributes": [
+      {
+       "name": "mod_a",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "mod_b",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ot Ouder",
+     "attributes": [
+      {
+       "name": "kinderen a zijn gelijk",
+       "type": {
+        "kind": "boolean"
+       }
+      },
+      {
+       "name": "kinderen b zijn gelijk",
+       "type": {
+        "kind": "boolean"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ot Kind A",
+     "attributes": [
+      {
+       "name": "numerieke waarde",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ot Kind B",
+     "attributes": [
+      {
+       "name": "numerieke waarde",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Groep",
+     "attributes": [],
+     "characteristics": []
+    },
+    {
+     "name": "Persoon",
+     "attributes": [
+      {
+       "name": "geboortedatum",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "aantal inconsistenties",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "inconsistentie",
+       "type": {
+        "kind": "boolean"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Bericht",
+     "attributes": [
+      {
+       "name": "boolean",
+       "type": {
+        "kind": "boolean"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ALEF4637",
+     "attributes": [
+      {
+       "name": "resultaat1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "waarde1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "waarde2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Plank",
+     "attributes": [],
+     "characteristics": []
+    },
+    {
+     "name": "Boek",
+     "attributes": [],
+     "characteristics": []
+    },
+    {
+     "name": "Label",
+     "attributes": [],
+     "characteristics": []
+    },
+    {
+     "name": "Hoofd",
+     "attributes": [
+      {
+       "name": "waarde",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Deel",
+     "attributes": [
+      {
+       "name": "waarde1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Formulier",
+     "attributes": [
+      {
+       "name": "veld1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "maximum1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "veld2",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "veld3",
+       "type": {
+        "kind": "boolean"
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "lege_velden_toegestaan"
+      },
+      {
+       "name": "veld1ofveld2"
+      },
+      {
+       "name": "strict formulier"
+      }
+     ]
+    },
+    {
+     "name": "Persoon",
+     "attributes": [
+      {
+       "name": "inkomen",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "attr met spaties",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Melding",
+     "attributes": [
+      {
+       "name": "opmerking",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "type",
+       "type": {
+        "kind": "domain",
+        "domain": "Keuze"
+       }
+      },
+      {
+       "name": "ernst",
+       "type": {
+        "kind": "domain",
+        "domain": "Ernst"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "persoon",
+     "attributes": [
+      {
+       "name": "rating",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "schaker"
+      },
+      {
+       "name": "vrijgezel"
+      }
+     ]
+    }
+   ],
+   "domains": [
+    {
+     "name": "Keuze",
+     "base": {
+      "kind": "enumeration",
+      "values": [
+       "A",
+       "B"
+      ]
+     }
+    },
+    {
+     "name": "Ernst",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    }
+   ],
+   "relationTypes": [
+    {
+     "name": "BT ALEF3411 Kind-Ouder",
+     "roles": [
+      {
+       "name": "kind",
+       "entityType": "OT ALEF3411 Persoon",
+       "plural": true
+      },
+      {
+       "name": "ouder",
+       "entityType": "OT ALEF3411 Persoon"
+      }
+     ]
+    },
+    {
+     "name": "ouder heeft kinderen A",
+     "roles": [
+      {
+       "name": "ft ouder a",
+       "entityType": "ot Ouder"
+      },
+      {
+       "name": "ft kind A",
+       "entityType": "ot Kind A",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "ouder heeft kinderen B",
+     "roles": [
+      {
+       "name": "ft ouder b",
+       "entityType": "ot Ouder"
+      },
+      {
+       "name": "ft kind B",
+       "entityType": "ot Kind B",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "Groep bestaat uit personen",
+     "roles": [
+      {
+       "name": "groep",
+       "entityType": "Groep"
+      },
+      {
+       "name": "persoon",
+       "entityType": "Persoon",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "Plank met boeken",
+     "roles": [
+      {
+       "name": "b plank",
+       "entityType": "Plank"
+      },
+      {
+       "name": "p boek",
+       "entityType": "Boek",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "Plank met label",
+     "roles": [
+      {
+       "name": "l plank",
+       "entityType": "Plank"
+      },
+      {
+       "name": "p label",
+       "entityType": "Label",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "Relatie",
+     "roles": [
+      {
+       "name": "hoofd",
+       "entityType": "Hoofd"
+      },
+      {
+       "name": "deel",
+       "entityType": "Deel",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "kind-ouder",
+     "roles": [
+      {
+       "name": "kind",
+       "entityType": "Persoon",
+       "plural": true
+      },
+      {
+       "name": "ouder",
+       "entityType": "Persoon"
+      }
+     ]
+    },
+    {
+     "name": "meldingenformulier",
+     "roles": [
+      {
+       "name": "formulier met melding",
+       "entityType": "Formulier"
+      },
+      {
+       "name": "melding",
+       "entityType": "Melding",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "persoonsformulier",
+     "roles": [
+      {
+       "name": "formulier van persoon",
+       "entityType": "Formulier"
+      },
+      {
+       "name": "personen",
+       "entityType": "Persoon"
+      }
+     ]
+    },
+    {
+     "name": "kleinkind",
+     "roles": [
+      {
+       "name": "partner",
+       "entityType": "Persoon"
+      },
+      {
+       "name": "partner van kind",
+       "entityType": "Persoon"
+      }
+     ]
+    },
+    {
+     "name": "buren",
+     "roles": [
+      {
+       "name": "buur",
+       "entityType": "persoon",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "ouder-kind",
+     "roles": [
+      {
+       "name": "ouder",
+       "entityType": "persoon",
+       "plural": true
+      },
+      {
+       "name": "kind",
+       "entityType": "persoon",
+       "plural": true
+      }
+     ]
+    }
+   ]
+  },
+  "ruleGroups": [
+   {
+    "name": "Regels boolean",
+    "rules": [
+     {
+      "name": "Bericht boolean is onwaar wanneer deze leeg is",
+      "versions": [
+       {
+        "validity": {},
+        "action": {
+         "kind": "assignment",
+         "target": {
+          "kind": "selection",
+          "object": {
+           "kind": "universal",
+           "id": "u.zvwYk9p3OW",
+           "entityType": "Bericht"
+          },
+          "selector": {
+           "kind": "attribute",
+           "name": "boolean"
+          }
+         },
+         "initial": true,
+         "value": {
+          "kind": "boolean",
+          "value": false
+         }
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "cases": [
+  {
+   "name": "001",
+   "calculationDate": "2023-07-01",
+   "instances": [
+    {
+     "id": "B1",
+     "entityType": "Bericht",
+     "slots": {}
+    }
+   ],
+   "expectations": [
+    {
+     "instance": "B1",
+     "attribute": "boolean",
+     "expected": {
+      "kind": "boolean",
+      "value": false
+     },
+     "decimals": -1
+    }
+   ]
+  }
+ ]
+}

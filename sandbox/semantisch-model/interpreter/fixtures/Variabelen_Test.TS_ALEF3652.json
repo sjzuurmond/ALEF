@@ -1,0 +1,1202 @@
+{
+ "model": {
+  "name": "TS ALEF3652",
+  "dataModel": {
+   "entityTypes": [
+    {
+     "name": "ALEF3652 schuld reeel",
+     "attributes": [
+      {
+       "name": "reel waarde in",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "reel waarde uit",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ALEF3652 schuld geheel",
+     "attributes": [
+      {
+       "name": "geheel waarde in",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "geheel waarde uit",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ALEF3652 schuld decimaal",
+     "attributes": [
+      {
+       "name": "decimaal waarde in",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "decimaal waarde uit",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Bibliotheek",
+     "attributes": [
+      {
+       "name": "naam",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "locatie",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "aantal boeken",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "geopend"
+      }
+     ]
+    },
+    {
+     "name": "Afdeling",
+     "attributes": [
+      {
+       "name": "label",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Boekenkast",
+     "attributes": [
+      {
+       "name": "label",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "totaal aantal pagina's",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "gevuld"
+      }
+     ]
+    },
+    {
+     "name": "Boek",
+     "attributes": [
+      {
+       "name": "titel",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "genre",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "aantal pagina's",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "gemiddelde aantal pagina's",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "uitgeleend"
+      },
+      {
+       "name": "in reparatie"
+      }
+     ]
+    },
+    {
+     "name": "Index",
+     "attributes": [],
+     "characteristics": []
+    },
+    {
+     "name": "ALEF4098",
+     "attributes": [
+      {
+       "name": "waarde1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "waarde2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "resultaat",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Bericht",
+     "attributes": [],
+     "characteristics": [
+      {
+       "name": "verzonden"
+      }
+     ]
+    },
+    {
+     "name": "Invoer",
+     "attributes": [
+      {
+       "name": "getal",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Uitvoer",
+     "attributes": [
+      {
+       "name": "resultaat",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Natuurlijke persoon",
+     "attributes": [
+      {
+       "name": "heeft testament",
+       "type": {
+        "kind": "domain",
+        "domain": "ja/nee"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "belasting",
+     "attributes": [
+      {
+       "name": "belasting tekst",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "testament",
+     "attributes": [
+      {
+       "name": "testament tekst",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "verdeling",
+     "attributes": [
+      {
+       "name": "verdeling tekst",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "InOutObject",
+     "attributes": [
+      {
+       "name": "in1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in3",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out3",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in4",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out4",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in5",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out5",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in6",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out6",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in7",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out7",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in8",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in9",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out9",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in10",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out10",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "in11",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "out11",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "keuze",
+       "type": {
+        "kind": "domain",
+        "domain": "keuze"
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "check"
+      },
+      {
+       "name": "te verdelen"
+      }
+     ]
+    },
+    {
+     "name": "CheckWaarden",
+     "attributes": [
+      {
+       "name": "checkWaarde1",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Post",
+     "attributes": [
+      {
+       "name": "waarde2",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Postzegel",
+     "attributes": [
+      {
+       "name": "tekst",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "rootNode",
+     "attributes": [
+      {
+       "name": "nodeNaam",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "nodeLinks",
+     "attributes": [
+      {
+       "name": "nodeNaamLinks",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "nodeLinksLinks",
+     "attributes": [
+      {
+       "name": "nodeNaamLinksLinks",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "nodeRechts",
+     "attributes": [
+      {
+       "name": "nodeNaamRechts",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "nodeRechtsRechts",
+     "attributes": [
+      {
+       "name": "nodeNaamRechtsRechts",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "T Velden",
+     "attributes": [
+      {
+       "name": "temp1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "temp2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "temp3",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "B Velden",
+     "attributes": [
+      {
+       "name": "temp4",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "temp5",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "temp6",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    }
+   ],
+   "domains": [
+    {
+     "name": "ja/nee",
+     "base": {
+      "kind": "enumeration",
+      "values": [
+       "ja",
+       "nee"
+      ]
+     }
+    },
+    {
+     "name": "keuze",
+     "base": {
+      "kind": "enumeration",
+      "values": [
+       "Ja",
+       "Nee"
+      ]
+     }
+    }
+   ],
+   "relationTypes": [
+    {
+     "name": "boeken in een kast",
+     "roles": [
+      {
+       "name": "boekenkast met boeken",
+       "entityType": "Boekenkast"
+      },
+      {
+       "name": "boek in de boekenkast",
+       "entityType": "Boek",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "kast op een afdeling",
+     "roles": [
+      {
+       "name": "afdeling",
+       "entityType": "Afdeling"
+      },
+      {
+       "name": "boekenkast in een afdeling",
+       "entityType": "Boekenkast",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "afdelingen van een bibliotheek",
+     "roles": [
+      {
+       "name": "bibliotheek",
+       "entityType": "Bibliotheek"
+      },
+      {
+       "name": "afdeling van de bibliotheek",
+       "entityType": "Afdeling",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "bibliotheek heeft een index",
+     "roles": [
+      {
+       "name": "bibliotheek met boeken",
+       "entityType": "Bibliotheek"
+      },
+      {
+       "name": "index",
+       "entityType": "Index"
+      }
+     ]
+    },
+    {
+     "name": "bericht heeft invoer",
+     "roles": [
+      {
+       "name": "bericht",
+       "entityType": "Bericht"
+      },
+      {
+       "name": "invoer",
+       "entityType": "Invoer"
+      }
+     ]
+    },
+    {
+     "name": "bericht heeft uitvoer",
+     "roles": [
+      {
+       "name": "bericht",
+       "entityType": "Bericht"
+      },
+      {
+       "name": "uitvoer",
+       "entityType": "Uitvoer"
+      }
+     ]
+    },
+    {
+     "name": "overledene erfbelasting",
+     "roles": [
+      {
+       "name": "overledene",
+       "entityType": "Natuurlijke persoon"
+      },
+      {
+       "name": "Erfbelasting ",
+       "entityType": "belasting"
+      }
+     ]
+    },
+    {
+     "name": "erfbelasting verdeling",
+     "roles": [
+      {
+       "name": "erfbelasting",
+       "entityType": "belasting",
+       "plural": true
+      },
+      {
+       "name": "Verdeling nalatenschap",
+       "entityType": "verdeling"
+      }
+     ]
+    },
+    {
+     "name": "verdeling testament",
+     "roles": [
+      {
+       "name": "verdeling ",
+       "entityType": "verdeling"
+      },
+      {
+       "name": "testament",
+       "entityType": "testament"
+      }
+     ]
+    },
+    {
+     "name": "relatie",
+     "roles": [
+      {
+       "name": "checkWaarden",
+       "entityType": "CheckWaarden"
+      },
+      {
+       "name": "inoutObject",
+       "entityType": "InOutObject"
+      }
+     ]
+    },
+    {
+     "name": "posten",
+     "roles": [
+      {
+       "name": "inout",
+       "entityType": "InOutObject"
+      },
+      {
+       "name": "post",
+       "entityType": "Post",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "meldingen",
+     "roles": [
+      {
+       "name": "brief",
+       "entityType": "Post"
+      },
+      {
+       "name": "zegel",
+       "entityType": "Postzegel",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "links van root",
+     "roles": [
+      {
+       "name": "root",
+       "entityType": "rootNode"
+      },
+      {
+       "name": "linkernode",
+       "entityType": "nodeLinks",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "linkslinks van links",
+     "roles": [
+      {
+       "name": "links",
+       "entityType": "nodeLinks"
+      },
+      {
+       "name": "linkslinksNode",
+       "entityType": "nodeLinksLinks",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "rechts van root",
+     "roles": [
+      {
+       "name": "root",
+       "entityType": "rootNode"
+      },
+      {
+       "name": "rechternode",
+       "entityType": "nodeRechts",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "rechtsrechts van rechts",
+     "roles": [
+      {
+       "name": "rechts",
+       "entityType": "nodeRechts"
+      },
+      {
+       "name": "rechtsrechtsNode",
+       "entityType": "nodeRechtsRechts",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "t heeft v",
+     "roles": [
+      {
+       "name": "T",
+       "entityType": "T Velden"
+      },
+      {
+       "name": "V",
+       "entityType": "B Velden"
+      }
+     ]
+    }
+   ]
+  },
+  "ruleGroups": [
+   {
+    "name": "RG ALEF3652",
+    "rules": [
+     {
+      "name": "ALEF3652 reeel aggeratie met variabele",
+      "versions": [
+       {
+        "validity": {},
+        "variables": [
+         {
+          "name": "A",
+          "value": {
+           "kind": "operation",
+           "op": "subtract",
+           "operands": [
+            {
+             "kind": "selection",
+             "object": {
+              "kind": "reference",
+              "to": "u.2zCNvfVC82_"
+             },
+             "selector": {
+              "kind": "attribute",
+              "name": "reel waarde in"
+             }
+            },
+            {
+             "kind": "number",
+             "value": "100"
+            }
+           ]
+          }
+         },
+         {
+          "name": "B",
+          "value": {
+           "kind": "number",
+           "value": "0"
+          }
+         }
+        ],
+        "action": {
+         "kind": "assignment",
+         "target": {
+          "kind": "selection",
+          "object": {
+           "kind": "universal",
+           "id": "u.2zCNvfVC82_",
+           "entityType": "ALEF3652 schuld reeel"
+          },
+          "selector": {
+           "kind": "attribute",
+           "name": "reel waarde uit"
+          }
+         },
+         "value": {
+          "kind": "operation",
+          "op": "max",
+          "operands": [
+           {
+            "kind": "variable",
+            "variable": "A"
+           },
+           {
+            "kind": "variable",
+            "variable": "B"
+           }
+          ]
+         }
+        }
+       }
+      ]
+     },
+     {
+      "name": "ALEF3652 reeel aggeratie 1",
+      "versions": [
+       {
+        "validity": {},
+        "action": {
+         "kind": "assignment",
+         "target": {
+          "kind": "selection",
+          "object": {
+           "kind": "universal",
+           "id": "u.2zCNvfVCfyj",
+           "entityType": "ALEF3652 schuld reeel"
+          },
+          "selector": {
+           "kind": "attribute",
+           "name": "reel waarde uit"
+          }
+         },
+         "value": {
+          "kind": "operation",
+          "op": "max",
+          "operands": [
+           {
+            "kind": "operation",
+            "op": "subtract",
+            "operands": [
+             {
+              "kind": "selection",
+              "object": {
+               "kind": "reference",
+               "to": "u.2zCNvfVCfyj"
+              },
+              "selector": {
+               "kind": "attribute",
+               "name": "reel waarde in"
+              }
+             },
+             {
+              "kind": "number",
+              "value": "100"
+             }
+            ]
+           },
+           {
+            "kind": "number",
+            "value": "0"
+           }
+          ]
+         }
+        }
+       }
+      ]
+     },
+     {
+      "name": "ALEF3652 geheel",
+      "versions": [
+       {
+        "validity": {},
+        "variables": [
+         {
+          "name": "A",
+          "value": {
+           "kind": "operation",
+           "op": "subtract",
+           "operands": [
+            {
+             "kind": "selection",
+             "object": {
+              "kind": "reference",
+              "to": "u.2zCNvfVCade"
+             },
+             "selector": {
+              "kind": "attribute",
+              "name": "geheel waarde in"
+             }
+            },
+            {
+             "kind": "number",
+             "value": "100"
+            }
+           ]
+          }
+         },
+         {
+          "name": "B",
+          "value": {
+           "kind": "number",
+           "value": "0"
+          }
+         }
+        ],
+        "action": {
+         "kind": "assignment",
+         "target": {
+          "kind": "selection",
+          "object": {
+           "kind": "universal",
+           "id": "u.2zCNvfVCade",
+           "entityType": "ALEF3652 schuld geheel"
+          },
+          "selector": {
+           "kind": "attribute",
+           "name": "geheel waarde uit"
+          }
+         },
+         "value": {
+          "kind": "operation",
+          "op": "max",
+          "operands": [
+           {
+            "kind": "variable",
+            "variable": "A"
+           },
+           {
+            "kind": "variable",
+            "variable": "B"
+           }
+          ]
+         }
+        }
+       }
+      ]
+     },
+     {
+      "name": "ALEF3652 decimaal",
+      "versions": [
+       {
+        "validity": {},
+        "variables": [
+         {
+          "name": "A",
+          "value": {
+           "kind": "operation",
+           "op": "subtract",
+           "operands": [
+            {
+             "kind": "selection",
+             "object": {
+              "kind": "reference",
+              "to": "u.2zCNvfVCaF7"
+             },
+             "selector": {
+              "kind": "attribute",
+              "name": "decimaal waarde in"
+             }
+            },
+            {
+             "kind": "number",
+             "value": "100.10"
+            }
+           ]
+          }
+         },
+         {
+          "name": "B",
+          "value": {
+           "kind": "number",
+           "value": "0"
+          }
+         }
+        ],
+        "action": {
+         "kind": "assignment",
+         "target": {
+          "kind": "selection",
+          "object": {
+           "kind": "universal",
+           "id": "u.2zCNvfVCaF7",
+           "entityType": "ALEF3652 schuld decimaal"
+          },
+          "selector": {
+           "kind": "attribute",
+           "name": "decimaal waarde uit"
+          }
+         },
+         "value": {
+          "kind": "operation",
+          "op": "max",
+          "operands": [
+           {
+            "kind": "variable",
+            "variable": "A"
+           },
+           {
+            "kind": "variable",
+            "variable": "B"
+           }
+          ]
+         }
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "cases": [
+  {
+   "name": "ALEF3652 reel",
+   "calculationDate": "2022-07-01",
+   "instances": [
+    {
+     "id": "s",
+     "entityType": "ALEF3652 schuld reeel",
+     "slots": {
+      "reel waarde in": {
+       "kind": "number",
+       "value": "50"
+      }
+     }
+    }
+   ],
+   "expectations": [
+    {
+     "instance": "s",
+     "attribute": "reel waarde uit",
+     "expected": {
+      "kind": "number",
+      "value": "0"
+     },
+     "decimals": -1
+    }
+   ]
+  },
+  {
+   "name": "ALEF3652 geheel",
+   "calculationDate": "2022-07-01",
+   "instances": [
+    {
+     "id": "s",
+     "entityType": "ALEF3652 schuld geheel",
+     "slots": {
+      "geheel waarde in": {
+       "kind": "number",
+       "value": "50"
+      }
+     }
+    }
+   ],
+   "expectations": [
+    {
+     "instance": "s",
+     "attribute": "geheel waarde uit",
+     "expected": {
+      "kind": "number",
+      "value": "0"
+     },
+     "decimals": -1
+    }
+   ]
+  },
+  {
+   "name": "ALEF3652 decimaal",
+   "calculationDate": "2022-07-01",
+   "instances": [
+    {
+     "id": "s",
+     "entityType": "ALEF3652 schuld decimaal",
+     "slots": {
+      "decimaal waarde in": {
+       "kind": "number",
+       "value": "50.10"
+      }
+     }
+    }
+   ],
+   "expectations": [
+    {
+     "instance": "s",
+     "attribute": "decimaal waarde uit",
+     "expected": {
+      "kind": "number",
+      "value": "0"
+     },
+     "decimals": -1
+    }
+   ]
+  }
+ ]
+}

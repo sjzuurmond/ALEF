@@ -1,0 +1,2961 @@
+{
+ "model": {
+  "name": "TS ALEF4617",
+  "dataModel": {
+   "entityTypes": [
+    {
+     "name": "Kast",
+     "attributes": [
+      {
+       "name": "max boeken op plank",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "max boeken op plank met min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "max boeken op plank met max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "max boeken op plank met max en min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "min boeken op plank ",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "min boeken op plank met min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "min boeken op plank met max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "min boeken op plank met max en min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "plank",
+     "attributes": [
+      {
+       "name": "boeken op plank",
+       "type": {
+        "kind": "domain",
+        "domain": "geheel getal"
+       }
+      },
+      {
+       "name": "b1",
+       "type": {
+        "kind": "boolean"
+       }
+      },
+      {
+       "name": "b2",
+       "type": {
+        "kind": "boolean"
+       }
+      },
+      {
+       "name": "b3 ",
+       "type": {
+        "kind": "boolean"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "boek",
+     "attributes": [
+      {
+       "name": "aantal eenheid pagina-formaat",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "aantal eenheid pagina-bron",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 2
+        }
+       }
+      },
+      {
+       "name": "numeriek aantal-bron",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "bron bedrag",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag A0"
+       }
+      },
+      {
+       "name": "bron bedrag totaal",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Bericht",
+     "attributes": [
+      {
+       "name": "resultaat 1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat 2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "resultaat 3",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 20
+        }
+       }
+      },
+      {
+       "name": "resultaat 4",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 10
+        }
+       }
+      },
+      {
+       "name": "resultaat 5",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 10
+        }
+       }
+      },
+      {
+       "name": "resultaat 6",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 10
+        }
+       }
+      },
+      {
+       "name": "resultaat 7",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 10
+        }
+       }
+      },
+      {
+       "name": "resultaat 8",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "resultaat 9",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 6
+        }
+       }
+      },
+      {
+       "name": "resultaat 10",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "tussenresultaat use-case",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 20
+        }
+       }
+      },
+      {
+       "name": "eindresultaat use-case",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 5
+        }
+       }
+      },
+      {
+       "name": "percentage",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "percentage als getal",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Subbericht",
+     "attributes": [
+      {
+       "name": "getal 1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "getal 2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "geheel getal 1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "geheel getal 2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "breuk 1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "breuk 2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "getal met decimalen 1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 100
+        }
+       }
+      },
+      {
+       "name": "getal met decimalen 2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 100
+        }
+       }
+      },
+      {
+       "name": "enkelvoudige rente",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 5
+        }
+       }
+      },
+      {
+       "name": "looptijd",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ALEF4641",
+     "attributes": [
+      {
+       "name": "resultaat max max max max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max max max max uitleg",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max max max max 2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max max max max 2 uitleg",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max max min min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max max max min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max max min max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat min max max max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat min max min min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat min max max min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat min max min max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max min max max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max min min min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max min max min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max min min max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat max min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat min max",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat min min",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Persoon",
+     "attributes": [
+      {
+       "name": "totaal",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "subtotaal",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "kosten",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "absoluteWaarde",
+     "attributes": [
+      {
+       "name": "invoerA",
+       "type": {
+        "kind": "domain",
+        "domain": "Euros"
+       }
+      },
+      {
+       "name": "invoerB",
+       "type": {
+        "kind": "domain",
+        "domain": "Getal"
+       }
+      },
+      {
+       "name": "invoerC",
+       "type": {
+        "kind": "domain",
+        "domain": "Dagen"
+       }
+      },
+      {
+       "name": "invoerD",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "invoerE",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "verkeerdeType",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanAbsoluteWaarde",
+       "type": {
+        "kind": "domain",
+        "domain": "Euros"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanDagUit",
+       "type": {
+        "kind": "domain",
+        "domain": "Geheel"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanMaandUit",
+       "type": {
+        "kind": "domain",
+        "domain": "Geheel"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanJaarUit",
+       "type": {
+        "kind": "domain",
+        "domain": "Geheel"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanRekenjaar",
+       "type": {
+        "kind": "domain",
+        "domain": "Geheel"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanAfronding",
+       "type": {
+        "kind": "domain",
+        "domain": "Decimaal3"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanAggregratie",
+       "type": {
+        "kind": "domain",
+        "domain": "Getal"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanExtremeWaarde",
+       "type": {
+        "kind": "domain",
+        "domain": "Getal"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanExpressie",
+       "type": {
+        "kind": "domain",
+        "domain": "Getal"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanNumWaardeTijdsduur",
+       "type": {
+        "kind": "domain",
+        "domain": "Getal"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanParameter",
+       "type": {
+        "kind": "domain",
+        "domain": "Decimaal1"
+       }
+      },
+      {
+       "name": "AbsoluteWaardeVanPercentage",
+       "type": {
+        "kind": "percentage"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "subObjectAbsoluteWaarde",
+     "attributes": [
+      {
+       "name": "subInvoer",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "AfrondenBerekenenObject",
+     "attributes": [
+      {
+       "name": "InvoerA",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 100
+        }
+       }
+      },
+      {
+       "name": "InvoerB",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 100
+        }
+       }
+      },
+      {
+       "name": "A Afronden naar boven - 0 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "A Afronden naar beneden - 0 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "A Afronden rekenkundig - 0 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "A Afronden richting nul - 0 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "A Afronden weg van nul - 0 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "A Afronden rekenkundig half richting nul - 0 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "A Afronden naar boven - 1 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "A Afronden naar boven - 2 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 2
+        }
+       }
+      },
+      {
+       "name": "A Afronden naar boven - 3 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "A Afronden naar boven - 4 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 4
+        }
+       }
+      },
+      {
+       "name": "A Afronden naar boven - 5 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 5
+        }
+       }
+      },
+      {
+       "name": "Som: Links Afronden naar boven - 100 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 100
+        }
+       }
+      },
+      {
+       "name": "Som: Rechts Afronden naar boven - 100 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 100
+        }
+       }
+      },
+      {
+       "name": "Som: Beide Afronden naar boven - 1 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "Som: Totaal Afronden naar boven - 1 dec",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "AfrondenBinnenExpressiesObject",
+     "attributes": [
+      {
+       "name": "afrondenHeleExpressie1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "afrondenHeleExpressie2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "afrondenLinkerkant",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "afrondenRechterkant",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "afrondenHeleExpressie",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "AfrondenVergelijkenObject",
+     "attributes": [
+      {
+       "name": "va1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "va2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "va3",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "va4",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "va5",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "AfrondenDomeinObject",
+     "attributes": [
+      {
+       "name": "invoerDomein",
+       "type": {
+        "kind": "domain",
+        "domain": "Domein"
+       }
+      },
+      {
+       "name": "uitvoerDomein",
+       "type": {
+        "kind": "domain",
+        "domain": "Domein"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "begrensdeWaarde",
+     "attributes": [
+      {
+       "name": "invoerA",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "invoerB",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "WaardeMinMax",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "WaardeEnkelMinimum",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "WaardeEnkelMaximum",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "WaardeAlsKilos",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "invoerGramA",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "invoerKilogramB",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "testobject",
+     "attributes": [
+      {
+       "name": "invoerDatum",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "invoerDatumtijd",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "uitvoerJaar",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "uitvoerMaand",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "uitvoerDag",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "uitvoerUur",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "uitvoerMinuut",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "uitvoerSeconde",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "uitvoerNanoseconde",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "DecimalenObject",
+     "attributes": [
+      {
+       "name": "getalMet0Decimalen",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "getalMet1Decimalen",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "getalMet2Decimalen",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 2
+        }
+       }
+      },
+      {
+       "name": "getalMet3Decimalen",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "reeelGetal",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Datum",
+     "attributes": [
+      {
+       "name": "datum",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "jaartal",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": [
+      {
+       "name": "eerste paasdag"
+      },
+      {
+       "name": "tweede paasdag"
+      },
+      {
+       "name": "hemelvaartsdag"
+      },
+      {
+       "name": "eerste pinksterdag"
+      },
+      {
+       "name": "tweede pinksterdag"
+      }
+     ]
+    },
+    {
+     "name": "ExtremeWaarden",
+     "attributes": [
+      {
+       "name": "resultaat van numeriek",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "resultaat van numeriek1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat van numeriek2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 5
+        }
+       }
+      },
+      {
+       "name": "resultaat van numeriek3",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "numeriek1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 5
+        }
+       }
+      },
+      {
+       "name": "numeriek2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 6
+        }
+       }
+      },
+      {
+       "name": "numeriek3",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 5
+        }
+       }
+      },
+      {
+       "name": "resultaat van datum",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "datum1",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "datum2",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "datum3",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "resultaat van tijdsduur",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "tijdsduur1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "tijdsduur2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "tijdsduur3",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "resultaat van bedrag",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "bedrag1",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "bedrag2",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "bedrag3",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "jaar",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "maand",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "dag",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "tekst",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "tekst_domein",
+       "type": {
+        "kind": "domain",
+        "domain": "tekst_domein"
+       }
+      },
+      {
+       "name": "boolean",
+       "type": {
+        "kind": "boolean"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Bericht",
+     "attributes": [
+      {
+       "name": "resultaat zonder haakjes",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "resultaat met haakjes",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "rekenwaarden",
+     "attributes": [
+      {
+       "name": "waarde1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "waarde2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "resultaat",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 100
+        }
+       }
+      },
+      {
+       "name": "geheel",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "afronding",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Bericht",
+     "attributes": [
+      {
+       "name": "getal 1",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "getal 2",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "getal met eenheid",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "percentage",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "percentage 2",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "uitkomst",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "uitkomst 2",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "uitkomst 3",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "uitkomst 4",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "uitkomst 5",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "uitkomst 6",
+       "type": {
+        "kind": "percentage"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Rekening",
+     "attributes": [
+      {
+       "name": "rente",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": "rente2",
+       "type": {
+        "kind": "percentage"
+       }
+      },
+      {
+       "name": " renteDom",
+       "type": {
+        "kind": "domain",
+        "domain": "Percentage"
+       }
+      },
+      {
+       "name": " renteDom2",
+       "type": {
+        "kind": "domain",
+        "domain": "Percentage"
+       }
+      },
+      {
+       "name": "saldo",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "saldo2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 2
+        }
+       }
+      },
+      {
+       "name": " saldo3",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "kosten",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": " dummy",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": " realdummy",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "numDomain",
+       "type": {
+        "kind": "domain",
+        "domain": "Nummer"
+       }
+      },
+      {
+       "name": "n",
+       "type": {
+        "kind": "domain",
+        "domain": "Nummer"
+       }
+      },
+      {
+       "name": "p",
+       "type": {
+        "kind": "domain",
+        "domain": "Perc"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Basis Rekenregels",
+     "attributes": [
+      {
+       "name": "A",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 21
+        }
+       }
+      },
+      {
+       "name": "B",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 21
+        }
+       }
+      },
+      {
+       "name": "C",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 21
+        }
+       }
+      },
+      {
+       "name": "Resultaat van de optelling",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 21
+        }
+       }
+      },
+      {
+       "name": "Resultaat van de aftrekking",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 21
+        }
+       }
+      },
+      {
+       "name": "Resultaat van de vermenigvuldiging",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "Resultaat van de deling",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Maal - Delen Rekenregels",
+     "attributes": [
+      {
+       "name": "A",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "B",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "C",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "Resultaat: A : B x C",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "Resultaat met haakjes: A : (B x C)",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "Resultaat: A x B : C",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Maal - Plus Rekenregels",
+     "attributes": [
+      {
+       "name": "A",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "B",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "C",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "D",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "Resultaat: A + B x C - D",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "Resultaat met haakjes links: (A + B) x C - D",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "Resultaat met haakjes rechts: A + B x (C - D)",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "Sommaties",
+     "attributes": [
+      {
+       "name": "A",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "B",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "C",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "bedrag",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "datum1",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "datum2",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "tijdsduur1",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "tijdsduur2",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "Initiele waarde",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Resultaat van de sommatie",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Initiele waarde met vermindering",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Sommatie met parameter",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Sommatie met alleen parameters",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Sommatie met sommatie regel",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Sommatie met berekening",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Sommatie met afronding",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Sommatie met max/min waarde",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 3
+        }
+       }
+      },
+      {
+       "name": "Sommatie met literals = twee",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "Sommatie met literals met eenheid",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "Sommatie in euro's",
+       "type": {
+        "kind": "domain",
+        "domain": "Bedrag"
+       }
+      },
+      {
+       "name": "Sommatie in tijdsduur",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ObjectA",
+     "attributes": [
+      {
+       "name": "Tekst resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Tekst resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Nummer resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Tijdsduur resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Boolean resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + DatumTijd resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Datum resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Domein resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Enum resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Param resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Percentage resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "TekstAttr",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "NumeriekAttr",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "TijdsduurAttr",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "BooleanAttr",
+       "type": {
+        "kind": "boolean"
+       }
+      },
+      {
+       "name": "DatumTijdAttr",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "DatumAttr",
+       "type": {
+        "kind": "datetime"
+       }
+      },
+      {
+       "name": "EnumAttr",
+       "type": {
+        "kind": "domain",
+        "domain": "mijnEnum"
+       }
+      },
+      {
+       "name": "DomeinAttr",
+       "type": {
+        "kind": "domain",
+        "domain": "mijnDomein"
+       }
+      },
+      {
+       "name": "PercentageAttr",
+       "type": {
+        "kind": "percentage"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ObjectB",
+     "attributes": [
+      {
+       "name": "Tekst + max waarde",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + absolute waarde",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + leeg",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + sommatie",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + jaar",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + maand",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + dag",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Rekendatum",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + DatumMetJaarMaandDag resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + aggregratie",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + RekenExpressie resultaat",
+       "type": {
+        "kind": "text"
+       }
+      },
+      {
+       "name": "Tekst + Eerste Paasdag resultaat",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "subObject van B",
+     "attributes": [
+      {
+       "name": "aantal knikkers",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "ObjectVoledigePrecisie",
+     "attributes": [
+      {
+       "name": "teller",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "noemer",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 0
+        }
+       }
+      },
+      {
+       "name": "somVanBreuken",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "somVanBreukenABS",
+       "type": {
+        "kind": "number"
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "WortelExpressie",
+     "attributes": [
+      {
+       "name": "radicand",
+       "type": {
+        "kind": "number"
+       }
+      },
+      {
+       "name": "wortel_floor",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 20
+        }
+       }
+      },
+      {
+       "name": "wortel",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 20
+        }
+       }
+      },
+      {
+       "name": "wortel_ceil",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 20
+        }
+       }
+      },
+      {
+       "name": "verschil tussen floor en ceil",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 20
+        }
+       }
+      },
+      {
+       "name": "kwadraad van wortel_floor",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 40
+        }
+       }
+      },
+      {
+       "name": "wortel_floor maal wortel_floor",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 40
+        }
+       }
+      },
+      {
+       "name": "kwadraad van wortel_ceil",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 40
+        }
+       }
+      },
+      {
+       "name": "wortel_ceil maal wortel_ceil",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 40
+        }
+       }
+      },
+      {
+       "name": "wortel van de wortel",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 10
+        }
+       }
+      }
+     ],
+     "characteristics": []
+    },
+    {
+     "name": "vierkant",
+     "attributes": [
+      {
+       "name": "oppervlakte",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "ribbe",
+       "type": {
+        "kind": "number",
+        "spec": {
+         "precision": 1
+        }
+       }
+      },
+      {
+       "name": "naam",
+       "type": {
+        "kind": "text"
+       }
+      }
+     ],
+     "characteristics": []
+    }
+   ],
+   "domains": [
+    {
+     "name": "geheel getal",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "Bedrag",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "Bedrag A0",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "Bedrag",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "Getal",
+     "base": {
+      "kind": "number"
+     }
+    },
+    {
+     "name": "Geheel",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "Decimaal1",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 1
+      }
+     }
+    },
+    {
+     "name": "Decimaal3",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 3
+      }
+     }
+    },
+    {
+     "name": "Euros",
+     "base": {
+      "kind": "number"
+     }
+    },
+    {
+     "name": "Dagen",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "Domein",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "NumDomein",
+     "base": {
+      "kind": "number"
+     }
+    },
+    {
+     "name": "NumDomein",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "Bedrag",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "tekst_domein",
+     "base": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "Percentage",
+     "base": {
+      "kind": "percentage"
+     }
+    },
+    {
+     "name": "Nummer",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "Perc",
+     "base": {
+      "kind": "percentage"
+     }
+    },
+    {
+     "name": "Bedrag",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "mijnDomein",
+     "base": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "mijnEnum",
+     "base": {
+      "kind": "enumeration",
+      "values": [
+       "keuze 1",
+       "keuze 2",
+       "keuze 3"
+      ]
+     }
+    }
+   ],
+   "parameters": [
+    {
+     "name": "NUM_PARAMETER",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 1
+      }
+     }
+    },
+    {
+     "name": "NUL_VIA_PARAM",
+     "type": {
+      "kind": "domain",
+      "domain": "NumDomein"
+     }
+    },
+    {
+     "name": "NUM1_PARAMETER",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 2
+      }
+     }
+    },
+    {
+     "name": "NUM2_PARAMETER",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "NUM3_PARAMETER",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 4
+      }
+     }
+    },
+    {
+     "name": "DAT1_PARAMETER",
+     "type": {
+      "kind": "datetime"
+     }
+    },
+    {
+     "name": "DAT2_PARAMETER",
+     "type": {
+      "kind": "datetime"
+     }
+    },
+    {
+     "name": "DAT3_PARAMETER",
+     "type": {
+      "kind": "datetime"
+     }
+    },
+    {
+     "name": "TIJDSDUUR1_PARAMETER",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "TIJDSDUUR2_PARAMETER",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "TIJDSDUUR3_PARAMETER",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "BEDRAG1_PARAMETER",
+     "type": {
+      "kind": "domain",
+      "domain": "Bedrag"
+     }
+    },
+    {
+     "name": "BEDRAG2_PARAMETER",
+     "type": {
+      "kind": "domain",
+      "domain": "Bedrag"
+     }
+    },
+    {
+     "name": "BEDRAG3_PARAMETER",
+     "type": {
+      "kind": "domain",
+      "domain": "Bedrag"
+     }
+    },
+    {
+     "name": "percentage parameter 1",
+     "type": {
+      "kind": "percentage"
+     }
+    },
+    {
+     "name": "percentage parameter 2",
+     "type": {
+      "kind": "percentage"
+     }
+    },
+    {
+     "name": "HUIDIGE_RENTE_PERCENTAGE",
+     "type": {
+      "kind": "domain",
+      "domain": "Percentage"
+     }
+    },
+    {
+     "name": "HUIDIGE_GRENS",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "PARAM_0",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "PARAM_1",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "PARAM_2",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "PARAM_3",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 0
+      }
+     }
+    },
+    {
+     "name": "TekstParam1",
+     "type": {
+      "kind": "text"
+     }
+    },
+    {
+     "name": "NumeriekParam1",
+     "type": {
+      "kind": "number",
+      "spec": {
+       "precision": 1
+      }
+     }
+    }
+   ],
+   "relationTypes": [
+    {
+     "name": "kast met planken",
+     "roles": [
+      {
+       "name": "boekenkast",
+       "entityType": "Kast"
+      },
+      {
+       "name": "boekenplank",
+       "entityType": "plank",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "Bericht heeft subberichten",
+     "roles": [
+      {
+       "name": "bericht",
+       "entityType": "Bericht"
+      },
+      {
+       "name": "subbericht",
+       "entityType": "Subbericht"
+      }
+     ]
+    },
+    {
+     "name": "Object heeft subObject",
+     "roles": [
+      {
+       "name": "HoofdObject",
+       "entityType": "absoluteWaarde"
+      },
+      {
+       "name": "subObject",
+       "entityType": "subObjectAbsoluteWaarde",
+       "plural": true
+      }
+     ]
+    },
+    {
+     "name": "B heeft b-tjes",
+     "roles": [
+      {
+       "name": "B",
+       "entityType": "ObjectB"
+      },
+      {
+       "name": "b-tje",
+       "entityType": "subObject van B",
+       "plural": true
+      }
+     ]
+    }
+   ]
+  },
+  "ruleGroups": [
+   {
+    "name": "RG ALEF4617",
+    "rules": [
+     {
+      "name": "b",
+      "versions": [
+       {
+        "validity": {},
+        "action": {
+         "kind": "assignment",
+         "target": {
+          "kind": "selection",
+          "object": {
+           "kind": "universal",
+           "id": "u.51EtpkOGsfv",
+           "entityType": "Persoon"
+          },
+          "selector": {
+           "kind": "attribute",
+           "name": "totaal"
+          }
+         },
+         "value": {
+          "kind": "operation",
+          "op": "add",
+          "operands": [
+           {
+            "kind": "selection",
+            "object": {
+             "kind": "reference",
+             "to": "u.51EtpkOGsfv"
+            },
+            "selector": {
+             "kind": "attribute",
+             "name": "subtotaal"
+            }
+           },
+           {
+            "kind": "operation",
+            "op": "round",
+            "precision": 0,
+            "operands": [
+             {
+              "kind": "operation",
+              "op": "abs",
+              "operands": [
+               {
+                "kind": "selection",
+                "object": {
+                 "kind": "reference",
+                 "to": "u.51EtpkOGsfv"
+                },
+                "selector": {
+                 "kind": "attribute",
+                 "name": "kosten"
+                }
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "parameterSets": [
+   {
+    "validity": {},
+    "assignments": [
+     {
+      "parameter": "NUM_PARAMETER",
+      "value": {
+       "kind": "number",
+       "value": "0"
+      }
+     }
+    ]
+   },
+   {
+    "validity": {},
+    "assignments": [
+     {
+      "parameter": "NUM1_PARAMETER",
+      "value": {
+       "kind": "number",
+       "value": "1"
+      }
+     },
+     {
+      "parameter": "NUM2_PARAMETER",
+      "value": {
+       "kind": "number",
+       "value": "2"
+      }
+     },
+     {
+      "parameter": "NUM3_PARAMETER",
+      "value": {
+       "kind": "number",
+       "value": "3"
+      }
+     }
+    ]
+   },
+   {
+    "validity": {},
+    "assignments": [
+     {
+      "parameter": "PARAM_0",
+      "value": {
+       "kind": "number",
+       "value": "0"
+      }
+     },
+     {
+      "parameter": "PARAM_1",
+      "value": {
+       "kind": "number",
+       "value": "1"
+      }
+     },
+     {
+      "parameter": "PARAM_2",
+      "value": {
+       "kind": "number",
+       "value": "2"
+      }
+     },
+     {
+      "parameter": "PARAM_3",
+      "value": {
+       "kind": "number",
+       "value": "3"
+      }
+     }
+    ]
+   },
+   {
+    "validity": {},
+    "assignments": [
+     {
+      "parameter": "NumeriekParam1",
+      "value": {
+       "kind": "number",
+       "value": "1"
+      }
+     },
+     {
+      "parameter": "TekstParam1",
+      "value": {
+       "kind": "text",
+       "value": "tekstparam1 waarde"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "cases": [
+  {
+   "name": "001",
+   "calculationDate": "2023-07-01",
+   "instances": [
+    {
+     "id": "b",
+     "entityType": "Persoon",
+     "slots": {
+      "kosten": {
+       "kind": "number",
+       "value": "-20.55"
+      },
+      "subtotaal": {
+       "kind": "number",
+       "value": "20.25"
+      }
+     }
+    }
+   ],
+   "expectations": [
+    {
+     "instance": "b",
+     "attribute": "totaal",
+     "expected": {
+      "kind": "number",
+      "value": "41.25"
+     },
+     "decimals": -1
+    }
+   ]
+  }
+ ]
+}

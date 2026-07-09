@@ -51,7 +51,7 @@ class Universe {
 }
 
 // ---------- the interpreter ----------
-export function interpret(model, testCase) {
+function runModel(model, testCase) {
   const date = testCase.calculationDate;
   const uni = new Universe();
   const trace = { model: model.name, testCase: testCase.name, calculationDate: date,
@@ -200,9 +200,12 @@ export function interpret(model, testCase) {
   }
 
   function operation(env, e) {
-    const ops = e.operands.map((o) => evalExpr(env, o));
-    if (ops.some(isEmpty)) return EMPTY; // empty propagates (ALEF: lege waarde)
+    // Oracle semantics (RekenkundigeFuncties_Test): empty numeric operands act as 0
+    // ("1 getal is leeg" expects leeg+2+4 = 6, leeg*2*3 = 0); division by zero -> empty.
+    const ZERO = { kind: 'number', value: '0' };
+    const ops = e.operands.map((o) => { const v = evalExpr(env, o); return isEmpty(v) ? ZERO : v; });
     const [a, b] = ops.map((v) => num(v).value ?? v);
+    if (e.op === 'divide' && dec.isZero(b)) return EMPTY;
     // unit soundness: additive ops keep the shared unit; multiplicative ops always
     // drop units (compound-unit algebra is out of scope; use unitConversion to
     // reintroduce a unit deliberately)
@@ -223,8 +226,12 @@ export function interpret(model, testCase) {
       }
       case 'abs': return n(dec.abs(a));
       case 'sqrt': return n(dec.sqrt(a));
-      case 'round': case 'ceil': case 'floor':
-        return n(dec.round(a, e.precision ?? 0, e.op === 'round' ? 'round' : e.op), ops[0].unit);
+      case 'round': case 'ceil': case 'floor': {
+        const mode = e.op !== 'round' ? e.op
+          : { halfAwayFromZero: 'round', halfTowardZero: 'halfTrunc',
+              awayFromZero: 'away', towardZero: 'trunc' }[e.rounding ?? 'halfAwayFromZero'];
+        return n(dec.round(a, e.precision ?? 0, mode), ops[0].unit);
+      }
       default: unsupported(`operation '${e.op}'`);
     }
   }
@@ -504,7 +511,12 @@ export function interpret(model, testCase) {
           uni.fired.push({ ruleVersion: env.versionId, ...(inst && { instance: inst.id }) });
         }
       }
-      if (!group.recursive || uni.mutations === before) break;
+      // Always iterate to a fixpoint: ALEF evaluates dependency-driven (Merlin's lazy
+      // properties — rule order within a group is irrelevant), which re-running until
+      // nothing changes approximates. Oracle: 'Numeriek: Expressie vgl regel' has rule 1
+      // reading an attribute that rule 2 (listed later) computes. 'recursive' groups
+      // additionally allow rules to feed themselves; both converge or hit the cap.
+      if (uni.mutations === before) break;
       if (pass >= MAX_PASSES) throw new Error(`no fixpoint after ${MAX_PASSES} passes in group '${group.name}'`);
     }
   }
@@ -513,5 +525,13 @@ export function interpret(model, testCase) {
   for (const i of testCase.instances ?? []) {
     trace.instances.push({ id: i.id, entityType: i.entityType, ...(i.name && { name: i.name }) });
   }
-  return trace;
+  const state = {};
+  for (const inst of uni.instances.values())
+    state[inst.id] = { slots: Object.fromEntries(inst.slots), characteristics: [...inst.characteristics] };
+  return { trace, state };
 }
+
+// Public API: interpret() returns the schema-conformant trace; run() additionally
+// exposes the final instance state (used by the test runner to check expectations).
+export function interpret(model, testCase) { return runModel(model, testCase).trace; }
+export function run(model, testCase) { return runModel(model, testCase); }

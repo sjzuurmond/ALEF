@@ -154,11 +154,14 @@ explanation trail* — here, the emitted `evaluation-trace`).
 | File | Role |
 |---|---|
 | `interpreter.mjs` | The engine: navigation, expressions, conditions, actions, fixpoint loop, trace |
-| `decimal.mjs` | Exact fixed-point decimal arithmetic on `BigInt` (no floats for money) |
+| `decimal.mjs` | **Exact rational arithmetic** on `BigInt` (ALEF computes with BigRational — fractions like `2/32` and `2_2/3` are first-class), incl. exact k-th roots |
 | `render.mjs` | Injects trace values into rendering segments: “the bmi **[20.0]**” |
 | `run-demo.mjs` | Node runner for both examples (`--trace` prints full traces) |
 | `index.html` | Browser demo (serve this directory: `python3 -m http.server`) |
 | `*.testcase.json` | Test inputs: instances + slot values + calculation date |
+| `extract-tests.py` | Extracts test fixtures from ALEF's own test solutions (`solutions/*_Test`) |
+| `fixtures/` | Extracted fixtures: core model + cases + `UitvoerVoorspelling` expectations |
+| `run-alef-tests.mjs` | Runs all fixtures against the interpreter; ALEF's tests are the oracle |
 
 ```bash
 node sandbox/semantisch-model/interpreter/run-demo.mjs
@@ -176,8 +179,39 @@ checksum), and the actions `assignment` (with `initial`), `setCharacteristic`,
 `createObject`, `createFact`, `consistencyCheck` and a basic `distribution`.
 Deliberately unsupported (clear error): `timeProportional`, `durationWhere`,
 `isDayType`/`dayTypeDefinition`, `timelineStart` runtime semantics, non-elevenProof
-checksums, and compound-unit algebra (multiplicative operations drop units; use
-`unitConversion` to reintroduce one).
+checksums, compound-unit algebra (multiplicative operations drop units; use
+`unitConversion` to reintroduce one), and root degrees > 2000.
+
+## Tests extracted from ALEF (the oracle)
+
+`extract-tests.py` parses ALEF's own test solutions and converts the supported
+subset — object models, rule groups, `TestSet`s with instances and
+`UitvoerVoorspelling` expectations — into fixtures the interpreter replays:
+
+```bash
+python3 sandbox/semantisch-model/interpreter/extract-tests.py   # writes fixtures/
+node sandbox/semantisch-model/interpreter/run-alef-tests.mjs    # replays them
+# 178 passed, 0 failed, 4 errored (of 182 expectations, 19 test sets)
+```
+
+Using ALEF's tests as the correctness oracle surfaced real semantics the
+documentation alone did not give, all now implemented:
+
+- **Numbers are exact rationals** (BigRational): expectations include `2/32`,
+  `2_2/3` and 40+-digit exact quotients, so the interpreter computes with exact
+  fractions — including exact k-th roots (`(-125)^(1/3) = -5`, `√7` to 30 decimals).
+- **Empty acts as 0 in arithmetic** (`leeg + 2 + 4 = 6`), and division by zero
+  yields empty — not an error.
+- **Rule order within a group is irrelevant**: ALEF evaluates dependency-driven
+  (Merlin's lazy properties), which the interpreter approximates by iterating every
+  group to a fixpoint.
+- **All six ALEF rounding modes** (`Roundings`), with the oracle pinning down that
+  the legacy member `afgerond_half_naar_beneden` means ties-toward-zero.
+
+The 4 remaining errors are two test cases using root degree 100000, refused loudly.
+Skipped constructs are reported per test set (`ObjectListLiteral`, decision tables,
+`ConsistentieRegel`-style tests, flows, the service boundary, …) — the honest
+frontier for extending interpreter + extractor.
 
 ## Next step
 

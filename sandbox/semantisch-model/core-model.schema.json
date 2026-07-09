@@ -754,7 +754,13 @@
                    "abs", "sqrt", "round", "ceil", "floor"]
         },
         "operands": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Expression" } },
-        "precision": { "type": "integer", "minimum": 0, "description": "For round/ceil/floor: decimal places." }
+        "precision": { "type": "integer", "minimum": 0, "description": "For round/ceil/floor: decimal places." },
+        "rounding": {
+          "type": "string",
+          "enum": ["halfAwayFromZero", "halfTowardZero", "awayFromZero", "towardZero"],
+          "default": "halfAwayFromZero",
+          "description": "For op 'round': tie-breaking/direction (ALEF Roundings: rekenkundig, half richting nul, weg van nul, richting nul; naar boven/beneden are the ceil/floor ops)."
+        }
       }
     },
     "Aggregation": {
