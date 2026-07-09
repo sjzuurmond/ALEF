@@ -3,7 +3,9 @@
 An MPS solution that exports a JetBrains MPS AST to standard graph formats
 (GraphML, Graphviz DOT, …) from **inside the MPS IDE**, using the MPS **Open
 API**. It is the native counterpart of the offline
-[`scripts/mps-graph-export`](../../scripts/mps-graph-export/) tool:
+[`scripts/mps-graph-export`](../../scripts/mps-graph-export/) tool. See
+[`OPENAPI.md`](OPENAPI.md) for what the Open API is and how each of its types
+maps onto the exported graph.
 
 | | `scripts/mps-graph-export` | `mps.graph.export` (this solution) |
 |---|---|---|
