@@ -186,18 +186,35 @@ Het kernmodel is uitgewerkt tot een concrete, valideerbare schemadefinitie:
   (objectmodel `Persoon`, de regel `bmi = afronden(gewicht / (lengte × lengte), 1)`,
   een `Initialisatie`, en de beslistabel genormaliseerd naar regels).
 
-Het voorbeeld valideert tegen het schema. Snel te controleren:
+Het voorbeeld valideert tegen het schema; de evaluatie-trace (zie *Waarden tonen*
+hieronder) valideert tegen zijn schema en verwijst kruislings naar het model. Snel te
+controleren:
 
 ```bash
 pip install jsonschema
 python3 - <<'PY'
 import json
-from jsonschema import Draft202012Validator
-schema = json.load(open('docs/architectuur/semantisch-model.schema.json'))
-inst   = json.load(open('docs/architectuur/voorbeeld-bmi.json'))
-Draft202012Validator.check_schema(schema)
-errs = list(Draft202012Validator(schema).iter_errors(inst))
-print("VALID" if not errs else f"{len(errs)} fout(en)")
+from jsonschema import Draft202012Validator as V
+D = 'docs/architectuur/'
+m  = json.load(open(D+'semantisch-model.schema.json'))
+mi = json.load(open(D+'voorbeeld-bmi.json'))
+t  = json.load(open(D+'evaluatie-trace.schema.json'))
+ti = json.load(open(D+'voorbeeld-bmi.trace.json'))
+for s in (m, t): V.check_schema(s)
+for sch, inst, naam in [(m, mi, 'model'), (t, ti, 'trace')]:
+    errs = list(V(sch).iter_errors(inst))
+    print(naam, "VALID" if not errs else f"{len(errs)} fout(en)")
+
+# waarde-injectie: render de zin met waarden uit de trace
+vals = ti['waarden']['persoon#Jan']
+def fmt(w): return w['waarde'] + (f" {w['eenheid']}" if w.get('eenheid') else '') if w['soort'] in ('getal','percentage') else str(w.get('waarde'))
+out = []
+for s in mi['annotaties']['regel.bmi.v1']['rendering']['segments']:
+    if 'origin' in s:
+        out.append(s.get('text',''))
+        if s['origin'] in vals: out.append(f" [{fmt(vals[s['origin']])}]")
+    else: out.append(s['text'])
+print(''.join(out))
 PY
 ```
 
@@ -231,25 +248,63 @@ een cross-reference of als annotatiedoel). Dit houdt de uitvoerbare boom schoon 
 komt exact overeen met hoe MPS attributen aanhangt.
 
 Dezelfde overlay draagt de **linguïstische rendering-trace**. De `linguistics`-runtime
-rendert de AST naar een `NodeRendering`-boom waarin knopen een **origin** hebben (de
-node waar de tekst bij hoort, `getOrigin()`) en soms een **target** (voor
-referentie-spans, de node waar de verwijzing naartoe wijst, `getTarget()`). In de
-overlay is de sleutel de origin, en zijn de `rendering.verwijzingen[].naar` de
-targets — dezelfde kant op als een cross-reference in het model. Zo levert de
-grammatica per node de natuurlijke-taal-weergave terug (uitlegbaarheid richting
-juristen) zonder de kern te vervuilen.
+rendert de AST naar een `NodeRendering`-*boom* ("NodeRenderings vormen een
+boomstructuur") waarin knopen een **origin** hebben (de node waar de tekst bij hoort,
+`getOrigin()`) en soms een **target** (voor referentie-spans, de node waar de
+verwijzing naartoe wijst, `getTarget()`). We modelleren dit als segmentenboom:
+`rendering.segments` bevat letterlijke tekst-segmenten en node-segmenten met een
+`origin` (waardedoel) en optioneel `target` (navigatiedoel). Zo levert de grammatica
+per node de natuurlijke-taal-weergave terug (uitlegbaarheid richting juristen) zonder
+de kern te vervuilen.
 
 ```jsonc
 "annotaties": {
   "regel.bmi":    { "commentaar": "...", "bron": [ { "soort": "vrij", "wet": "...", "verwijzing": "art. 3, tweede lid" } ], "metatags": [ { "naam": "status", "waarde": "concept" } ] },
-  "regel.bmi.v1": { "rendering": { "tekst": "De bmi van een Persoon is gelijk aan ...", "verwijzingen": [ { "tekst": "bmi", "naar": "at.persoon.bmi" } ] } }
+  "regel.bmi.v1": { "rendering": { "segments": [
+    { "text": "De " },
+    { "origin": "sel.bmi", "target": "at.persoon.bmi", "text": "bmi" },
+    { "text": " van een Persoon is gelijk aan " },
+    { "origin": "sel.gewicht", "text": "het gewicht van de Persoon" },
+    { "text": " gedeeld door (...)." }
+  ] } }
 }
 ```
 
-De overlay-sleutels moeten overeenkomen met een `id` in het model. Dat is een
-semantische invariant die JSON Schema niet afdwingt; een kleine linter (zie het
-validatie-snippet in de repo-historie) controleert dat elke `referentie.naar`,
-`verwijzingen[].naar` en overlay-sleutel oplost naar een bestaand id.
+De overlay-sleutels en segment-`origin`/`target` moeten overeenkomen met een `id` in
+het model. Dat is een semantische invariant die JSON Schema niet afdwingt; een kleine
+linter controleert dat elke `referentie.naar`, `origin`, `target` en overlay-sleutel
+oplost naar een bestaand id.
+
+### Waarden tonen (evaluatie-trace)
+
+De rendering-segmenten leveren het skelet voor een interpreter-UI zoals ALEF die zelf
+heeft: tekst met de gebruikte waarden ertussen, bv. *de bmi **[20,0]** = het gewicht
+**[80]** / (de lengte **[2,00]** × de lengte **[2,00]**)*. De waarden zelf horen niet
+in het model of in de statische rendering — het zijn resultaten van het **evalueren**
+van het model tegen één `TestGeval` (instantiedata + rekendatum), en dus gesleuteld op
+`(instantie, node-id, rekendatum)`. Dat is een apart zijartefact:
+
+- **[`evaluatie-trace.schema.json`](./evaluatie-trace.schema.json)** — JSON Schema van
+  één testrun. `waarden[instantie][node-id]` = de geëvalueerde `Waarde` (getagde union:
+  getal met optionele eenheid, tekst, boolean, enum, leeg, lijst, object-ref, en
+  `tijdlijn` voor tijdlijn-waardige slots). Dit is de tegenhanger van de `Debug*`-laag
+  (`interpreter.debug` / `interpreter.timed.debug`) die ALEF's eigen interpreter
+  produceert; het paart met de rendering via node-id (de `origin`).
+- **[`voorbeeld-bmi.trace.json`](./voorbeeld-bmi.trace.json)** — een uitgewerkte run
+  (`Jan`, gewicht 80, lengte 2,00 → bmi 20,0 → Gezond gewicht).
+
+Een UI loopt de segmenten af en injecteert per `origin` de waarde uit de gekozen run.
+Uitgerekend levert dat exact:
+
+> De bmi **[20,0]** van een Persoon is gelijk aan het gewicht van de Persoon **[80]**
+> gedeeld door (de lengte van de Persoon **[2,00]** maal de lengte van de Persoon
+> **[2,00]**), afgerond op 1 decimaal.
+
+Waarde-injectie is dus ondersteund: het model draagt de identiteit (`id`) en de
+rendering (`origin`/`target`), de trace draagt de waarden per instantie, en beide
+paren op node-id. Zie het validatie-snippet hieronder, dat naast schema-validatie ook
+de kruisverwijzingen tussen model, rendering en trace controleert en de zin met
+waarden rendert.
 
 ### Volgende stap
 

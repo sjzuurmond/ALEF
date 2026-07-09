@@ -40,6 +40,7 @@
                 "soort": "gelijkstelling",
                 "doel": {
                   "soort": "selectie",
+                  "id": "sel.bmi",
                   "object": { "soort": "universeel", "id": "persoon", "objecttype": "Persoon" },
                   "selector": { "soort": "attribuut", "naam": "bmi" }
                 },
@@ -54,6 +55,7 @@
                       "operator": "/",
                       "links": {
                         "soort": "selectie",
+                        "id": "sel.gewicht",
                         "object": { "soort": "referentie", "naar": "persoon" },
                         "selector": { "soort": "attribuut", "naam": "gewicht" }
                       },
@@ -64,11 +66,13 @@
                           "operator": "*",
                           "links": {
                             "soort": "selectie",
+                            "id": "sel.lengte.1",
                             "object": { "soort": "referentie", "naar": "persoon" },
                             "selector": { "soort": "attribuut", "naam": "lengte" }
                           },
                           "rechts": {
                             "soort": "selectie",
+                            "id": "sel.lengte.2",
                             "object": { "soort": "referentie", "naar": "persoon" },
                             "selector": { "soort": "attribuut", "naam": "lengte" }
                           }
@@ -102,9 +106,11 @@
         },
         {
           "$comment": "Beslistabel 'BMI categorie', genormaliseerd naar regels. Rij: als bmi >= ondergrens EN bmi < bovengrens dan categorie = X. Hier als drie samengestelde regels weergegeven.",
+          "id": "regel.bmi.tabel",
           "naam": "BMI categorie (tabel)",
           "versies": [
             {
+              "id": "regel.bmi.tabel.v1",
               "geldig": {},
               "conditie": {
                 "soort": "samengesteld",
@@ -142,6 +148,7 @@
                 "soort": "gelijkstelling",
                 "doel": {
                   "soort": "selectie",
+                  "id": "sel.categorie",
                   "object": { "soort": "referentie", "naar": "p" },
                   "selector": { "soort": "attribuut", "naam": "categorie" }
                 },
@@ -166,9 +173,16 @@
     "regel.bmi.v1": {
       "rendering": {
         "tekst": "De bmi van een Persoon is gelijk aan het gewicht van de Persoon gedeeld door (de lengte van de Persoon maal de lengte van de Persoon), afgerond op 1 decimaal.",
-        "verwijzingen": [
-          { "tekst": "bmi", "naar": "at.persoon.bmi" },
-          { "tekst": "Persoon", "naar": "ot.persoon" }
+        "segments": [
+          { "text": "De " },
+          { "origin": "sel.bmi", "target": "at.persoon.bmi", "text": "bmi" },
+          { "text": " van een Persoon is gelijk aan " },
+          { "origin": "sel.gewicht", "text": "het gewicht van de Persoon" },
+          { "text": " gedeeld door (" },
+          { "origin": "sel.lengte.1", "text": "de lengte van de Persoon" },
+          { "text": " maal " },
+          { "origin": "sel.lengte.2", "text": "de lengte van de Persoon" },
+          { "text": "), afgerond op 1 decimaal." }
         ]
       }
     }

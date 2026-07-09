@@ -628,12 +628,13 @@
       }
     },
     "Selectie": {
-      "description": "ISelectie — 'de <selector> van <object>'. Zowel lees- (in expressies) als schrijfzijde (Gelijkstelling.doel).",
+      "description": "ISelectie — 'de <selector> van <object>'. Zowel lees- (in expressies) als schrijfzijde (Gelijkstelling.doel). Draagt optioneel een 'id' zodat de geëvalueerde waarde per testrun te tonen is (zie rendering + evaluatie-trace).",
       "type": "object",
       "required": ["soort", "object", "selector"],
       "additionalProperties": false,
       "properties": {
         "soort": { "const": "selectie" },
+        "id": { "$ref": "#/$defs/NodeId" },
         "object": { "$ref": "#/$defs/Pad" },
         "selector": { "$ref": "#/$defs/Selector" }
       }
@@ -871,27 +872,43 @@
     },
 
     "Rendering": {
-      "title": "Linguïstische rendering (NodeRendering)",
-      "description": "De natuurlijke-taal-weergave van de node waarvan dit het annotatie-id is — de 'origin' van de rendering in de linguistics-runtime (r.getOrigin()). 'verwijzingen' zijn de deelspans binnen 'tekst' die naar een andere node verwijzen; hun 'naar' is de linguistics-'target' (r.getTarget()), dezelfde kant op als een cross-reference in het model.",
+      "title": "Linguïstische rendering (NodeRendering-boom)",
+      "description": "Natuurlijke-taal-weergave van de node waarvan dit het annotatie-id is. Gemodelleerd als segmentenboom, net als de NodeRendering-boom van de linguistics-runtime ('NodeRenderings vormen een boomstructuur'): elk node-segment draagt een 'origin' (de node waar de tekst bij hoort, r.getOrigin()) en optioneel een 'target' (voor referentie-spans, de node waar de verwijzing naartoe wijst, r.getTarget()). Een UI kan per 'origin' de geëvalueerde waarde uit een evaluatie-trace injecteren, bv. rendert 'de bmi' als 'de bmi [20,0]'. 'tekst' is een optionele gedenormaliseerde platte weergave voor zoeken/preview.",
       "type": "object",
-      "required": ["tekst"],
+      "required": ["segments"],
       "additionalProperties": false,
       "properties": {
-        "tekst": { "type": "string", "description": "De gerenderde Regelspraak-tekst voor deze node." },
-        "taal": { "type": "string", "default": "nl" },
-        "verwijzingen": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["naar"],
-            "additionalProperties": false,
-            "properties": {
-              "tekst": { "type": "string", "description": "De letterlijke referentie-span binnen 'tekst'." },
-              "naar": { "$ref": "#/$defs/NodeId" }
-            }
+        "segments": { "type": "array", "items": { "$ref": "#/$defs/Segment" } },
+        "tekst": { "type": "string", "description": "Optionele platte weergave, afgeleid van segments." },
+        "taal": { "type": "string", "default": "nl" }
+      }
+    },
+
+    "Segment": {
+      "title": "Rendering-segment",
+      "description": "Een blad (letterlijke tekst) of een node-segment (weergave van één model-node, met origin/target en zelf weer segments).",
+      "oneOf": [
+        {
+          "title": "Letterlijk tekstsegment",
+          "type": "object",
+          "required": ["text"],
+          "additionalProperties": false,
+          "properties": { "text": { "type": "string" } }
+        },
+        {
+          "title": "Node-segment",
+          "description": "Weergave van één model-node. 'origin' = die node (het waardedoel voor injectie); 'target' = referentiedoel voor navigatie (bv. het woord 'bmi' → de attribuutdefinitie). Display = 'text' (blad) of geneste 'segments'.",
+          "type": "object",
+          "required": ["origin"],
+          "additionalProperties": false,
+          "properties": {
+            "origin": { "$ref": "#/$defs/NodeId" },
+            "target": { "$ref": "#/$defs/NodeId" },
+            "text": { "type": "string" },
+            "segments": { "type": "array", "items": { "$ref": "#/$defs/Segment" } }
           }
         }
-      }
+      ]
     }
   }
 }
