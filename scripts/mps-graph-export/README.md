@@ -82,17 +82,14 @@ The tests run against a small synthetic model (`tests/sample.mps`) and cover
 concept/role resolution, containment and (same- and cross-model) reference
 edges, edge filtering, and every output writer.
 
-## Running it as an MPS plugin instead
+## In-IDE variant (MPS Open API plugin)
 
 This script deliberately works offline against `.mps` files, which makes it
 portable and testable. If you would rather trigger the export from inside the
-MPS IDE (e.g. a *Tools* menu action that exports the currently selected model
-or node), the same graph-building logic maps directly onto the MPS Open API:
-
-* iterate `SModel.getRootNodes()` / `SNode.getChildren()` for containment;
-* iterate `SNode.getReferences()` for reference edges;
-* read `SNode.getConcept().getName()` and `link.getRole()` for labels.
-
-Wrapping that in a `jetbrains.mps.lang.plugin` action and reusing the writers
-here would give an in-IDE exporter with identical output. Ask if you'd like
-that plugin variant added.
+MPS IDE (a *Tools* / context-menu action on the selected model or node), that
+lives as a separate MPS solution in
+[`solutions/mps.graph.export`](../../solutions/mps.graph.export/). It performs
+the same traversal against the **live** model through the Open API
+(`SModel.getRootNodes()` / `SNode.getChildren()` for containment,
+`SNode.getReferences()` for references) and produces an identical graph, using
+the same "one writer per format" design.
