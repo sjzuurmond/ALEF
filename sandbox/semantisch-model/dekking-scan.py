@@ -7,7 +7,7 @@ verdeelt ze over drie emmers: GEDEKT (in het schema), BUITEN SCOPE / GENORMALISE
 (bewust niet als eigen construct), en NOG TE DOEN (semantisch, komt voor, nog niet
 gemodelleerd). Puur leesbaar; wijzigt niets.
 
-Gebruik:  python3 docs/architectuur/dekking-scan.py [pad-naar-repo-root]
+Gebruik:  python3 sandbox/semantisch-model/dekking-scan.py [pad-naar-repo-root]
 """
 import xml.etree.ElementTree as ET
 import glob, sys, os, collections

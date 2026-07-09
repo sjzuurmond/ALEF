@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sjzuurmond/ALEF/docs/architectuur/core-model.schema.json",
+  "$id": "https://github.com/sjzuurmond/ALEF/sandbox/semantisch-model/core-model.schema.json",
   "title": "Object-centric rule interchange core",
   "description": "A generic, engine-agnostic semantic core for executable legislation. Keeps ALEF's object/instance-centric shape (entities, relations, universally-quantified rules, object-graph actions, dimensions, units, timelines) because that matches how law is formulated, but uses generic English terminology and a clean operation-based expression IR instead of surface-specific constructs. Theoretical trial; deliberately NOT identical to RegelRecht RFC-001, but borrows its clean bits (operation enum, type_spec, temporal spec, output-as-value). Discriminator field is 'kind'. Nesting = containment; string fields ending in Ref / named 'to'/'*Id' = cross-references. See core-model.md.",
   "type": "object",

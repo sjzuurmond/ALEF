@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/sjzuurmond/ALEF/sandbox/semantisch-model/semantisch-model.schema.json",
   "title": "ALEF semantisch regelmodel",
-  "description": "Interpreteerbaar semantisch model van een ALEF-regelmodel/regelservice: een geheel aan regels en gegevens waarmee wetgeving wordt uitgevoerd en dat gezamenlijk een of meer beslissingen/berekeningen maakt. Losgekoppeld van MPS, de projectionele editor en de generator-templates. Nesting = containment (de boom); string-verwijzingen (velden op '...Ref'/'*Naam'/'naar') = cross-references. Zie docs/architectuur/semantisch-model.md.",
+  "description": "Interpreteerbaar semantisch model van een ALEF-regelmodel/regelservice: een geheel aan regels en gegevens waarmee wetgeving wordt uitgevoerd en dat gezamenlijk een of meer beslissingen/berekeningen maakt. Losgekoppeld van MPS, de projectionele editor en de generator-templates. Nesting = containment (de boom); string-verwijzingen (velden op '...Ref'/'*Naam'/'naar') = cross-references. Zie sandbox/semantisch-model/semantisch-model.md.",
   "type": "object",
   "required": ["naam", "objectschema", "regelgroepen"],
   "additionalProperties": false,

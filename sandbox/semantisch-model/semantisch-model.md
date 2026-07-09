@@ -195,7 +195,7 @@ pip install jsonschema
 python3 - <<'PY'
 import json
 from jsonschema import Draft202012Validator as V
-D = 'docs/architectuur/'
+D = 'sandbox/semantisch-model/'
 m  = json.load(open(D+'semantisch-model.schema.json'))
 mi = json.load(open(D+'voorbeeld-bmi.json'))
 t  = json.load(open(D+'evaluatie-trace.schema.json'))
@@ -324,7 +324,7 @@ Om te sturen op wat er écht toe doet, telt
 `solutions/**/*.mps`-modellen en verdeelt ze over drie emmers. Draaien:
 
 ```bash
-python3 docs/architectuur/dekking-scan.py
+python3 sandbox/semantisch-model/dekking-scan.py
 ```
 
 Huidige uitkomst (569 modellen, 225 concepten, ~108k node-gebruiken):

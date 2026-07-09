@@ -22,8 +22,8 @@ RegelRecht RFC-001. Wel leent het de schone stukken daaruit (operation-enum,
 
 ```bash
 python3 -c "import json;from jsonschema import Draft202012Validator as V; \
-s=json.load(open('docs/architectuur/core-model.schema.json')); \
-e=json.load(open('docs/architectuur/core-model.example.json')); \
+s=json.load(open('sandbox/semantisch-model/core-model.schema.json')); \
+e=json.load(open('sandbox/semantisch-model/core-model.example.json')); \
 V.check_schema(s); print('VALID' if not list(V(s).iter_errors(e)) else 'INVALID')"
 ```
 
