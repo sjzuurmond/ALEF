@@ -171,11 +171,56 @@ je serialiseert; cross-referenties (→, bv. `AttribuutSelector → Attribuut`,
 `Parametertoekenning → Parameter`) zijn precies de plekken waar een geserialiseerd
 semantisch model stabiele identifiers nodig heeft.
 
-## Volgende stap
+## Het schema
 
-De voor de hand liggende vervolgstap is dit kernmodel om te zetten in een echte
-schemadefinitie (bijvoorbeeld JSON Schema of een vergelijkbare platte
-metamodel-definitie) en die te valideren door één echte `Regelgroep` uit een
-solution in deze repo er handmatig doorheen te lopen. Gebruik daarbij de
-`L*`-interfaces in `interpreter.debug` als sanity-check: zij markeren welke
-concepten de huidige interpreter al als uitvoerbaar beschouwt.
+Het kernmodel is uitgewerkt tot een concrete, valideerbare schemadefinitie:
+
+- **[`semantisch-model.schema.json`](./semantisch-model.schema.json)** — JSON Schema
+  (Draft 2020-12) van het interpreteerbare regelmodel. Getagde unions (`soort`)
+  voor datatypes, acties, condities, predicaten, navigatiepaden en expressies;
+  containment als nesting, cross-references als string-verwijzingen
+  (`Objecttype.naam`, `Domein.naam`, `Parameter.naam`, `Universeel.id`).
+- **[`voorbeeld-bmi.json`](./voorbeeld-bmi.json)** — een volledig uitgewerkte
+  instantie: het BMI-domein uit
+  `solutions/Beslistabellen_Test/models/Beslistabellen_Test.BMI_tabel.*`
+  (objectmodel `Persoon`, de regel `bmi = afronden(gewicht / (lengte × lengte), 1)`,
+  een `Initialisatie`, en de beslistabel genormaliseerd naar regels).
+
+Het voorbeeld valideert tegen het schema. Snel te controleren:
+
+```bash
+pip install jsonschema
+python3 - <<'PY'
+import json
+from jsonschema import Draft202012Validator
+schema = json.load(open('docs/architectuur/semantisch-model.schema.json'))
+inst   = json.load(open('docs/architectuur/voorbeeld-bmi.json'))
+Draft202012Validator.check_schema(schema)
+errs = list(Draft202012Validator(schema).iter_errors(inst))
+print("VALID" if not errs else f"{len(errs)} fout(en)")
+PY
+```
+
+### Ontwerpkeuzes
+
+- **Beslistabellen** krijgen geen eigen construct: ze normaliseren naar gewone
+  `Regel`s (zie de gegenereerde `regels: Regel [0..n]` in `BeslistabelVersie`).
+- **Universele kwantificatie** is expliciet gemaakt via het `universeel`-anker met
+  een optioneel `id`; herhaald gebruik van hetzelfde onderwerp binnen één regel is
+  een `referentie` naar dat `id` (een echte cross-reference, precies zoals in de AST
+  `OnderwerpRef` terugverwijst).
+- **Getallen** zijn strings (bv. `"18,5"`) om decimale precisie en de Nederlandse
+  komma-notatie te behouden.
+- Weggelaten: editor-scaffolding, Nederlandse grammatica (`ITaalkundig`),
+  testdekking (`ICoverageArc`) en generatie-only helpers — conform het
+  keep/drop-filter hierboven.
+
+### Volgende stap
+
+Het schema dekt nu de kern-constructies (acht actiesoorten, condities/predicaten,
+navigatie, ~een dozijn expressiesoorten, tijd-operatoren). Logische uitbreidingen:
+de resterende expressie- en predicaatsoorten uit `regelspraak.structure` aanvullen,
+de `.tijd`-laag (tijdlijn-waardige slots, periodes) verder uitmodelleren, en meer
+solutions door de validator halen. Gebruik daarbij de `L*`-interfaces in
+`interpreter.debug` als sanity-check: zij markeren welke concepten de huidige
+interpreter al als uitvoerbaar beschouwt.

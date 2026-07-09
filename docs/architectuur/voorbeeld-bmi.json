@@ -1,0 +1,153 @@
+{
+  "$comment": "Voorbeeld-instantie van semantisch-model.schema.json. Handmatig afgeleid uit solutions/Beslistabellen_Test/models/Beslistabellen_Test.BMI_tabel.* (gegevens + regels + beslistabel). De beslistabel is hier genormaliseerd naar gewone regels, conform het semantisch model.",
+  "naam": "BMI",
+  "objectschema": {
+    "domeinen": [
+      {
+        "naam": "BMI categorie",
+        "basis": {
+          "soort": "enumeratie",
+          "waarden": ["Ondergewicht", "Gezond gewicht", "Overgewicht", "Ernstig overgewicht"]
+        }
+      }
+    ],
+    "objecttypes": [
+      {
+        "naam": "Persoon",
+        "attributen": [
+          { "naam": "gewicht", "type": { "soort": "numeriek", "decimalen": 0 } },
+          { "naam": "lengte", "type": { "soort": "numeriek", "decimalen": 2 } },
+          { "naam": "bmi", "type": { "soort": "numeriek", "decimalen": 1 } },
+          { "naam": "categorie", "type": { "soort": "domein", "domein": "BMI categorie" } }
+        ]
+      }
+    ]
+  },
+  "regelgroepen": [
+    {
+      "naam": "BMI categorie",
+      "regels": [
+        {
+          "$comment": "Regel 'BMI': bmi van een Persoon = afronden( gewicht / (lengte * lengte), 1 decimaal).",
+          "naam": "BMI",
+          "versies": [
+            {
+              "geldig": {},
+              "actie": {
+                "soort": "gelijkstelling",
+                "doel": {
+                  "soort": "selectie",
+                  "object": { "soort": "universeel", "id": "persoon", "objecttype": "Persoon" },
+                  "selector": { "soort": "attribuut", "naam": "bmi" }
+                },
+                "waarde": {
+                  "soort": "afronden",
+                  "decimalen": 1,
+                  "hoe": "rekenkundig",
+                  "afTeRonden": {
+                    "soort": "haakjes",
+                    "waarde": {
+                      "soort": "rekenkundig",
+                      "operator": "/",
+                      "links": {
+                        "soort": "selectie",
+                        "object": { "soort": "referentie", "naar": "persoon" },
+                        "selector": { "soort": "attribuut", "naam": "gewicht" }
+                      },
+                      "rechts": {
+                        "soort": "haakjes",
+                        "waarde": {
+                          "soort": "rekenkundig",
+                          "operator": "*",
+                          "links": {
+                            "soort": "selectie",
+                            "object": { "soort": "referentie", "naar": "persoon" },
+                            "selector": { "soort": "attribuut", "naam": "lengte" }
+                          },
+                          "rechts": {
+                            "soort": "selectie",
+                            "object": { "soort": "referentie", "naar": "persoon" },
+                            "selector": { "soort": "attribuut", "naam": "lengte" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$comment": "Regel 'BMI categorie initieel': Initialisatie — categorie van een Persoon = Ernstig overgewicht.",
+          "naam": "BMI categorie initieel",
+          "versies": [
+            {
+              "geldig": {},
+              "actie": {
+                "soort": "gelijkstelling",
+                "initieel": true,
+                "doel": {
+                  "soort": "selectie",
+                  "object": { "soort": "universeel", "objecttype": "Persoon" },
+                  "selector": { "soort": "attribuut", "naam": "categorie" }
+                },
+                "waarde": { "soort": "enumWaarde", "domein": "BMI categorie", "waarde": "Ernstig overgewicht" }
+              }
+            }
+          ]
+        },
+        {
+          "$comment": "Beslistabel 'BMI categorie', genormaliseerd naar regels. Rij: als bmi >= ondergrens EN bmi < bovengrens dan categorie = X. Hier als drie samengestelde regels weergegeven.",
+          "naam": "BMI categorie (tabel)",
+          "versies": [
+            {
+              "geldig": {},
+              "conditie": {
+                "soort": "samengesteld",
+                "logica": "en",
+                "subcondities": [
+                  {
+                    "soort": "enkel",
+                    "expressie": {
+                      "soort": "selectie",
+                      "object": { "soort": "universeel", "id": "p", "objecttype": "Persoon" },
+                      "selector": { "soort": "attribuut", "naam": "bmi" }
+                    },
+                    "predicaat": {
+                      "soort": "vergelijking",
+                      "operator": ">=",
+                      "rechts": { "soort": "getal", "waarde": "18,5" }
+                    }
+                  },
+                  {
+                    "soort": "enkel",
+                    "expressie": {
+                      "soort": "selectie",
+                      "object": { "soort": "referentie", "naar": "p" },
+                      "selector": { "soort": "attribuut", "naam": "bmi" }
+                    },
+                    "predicaat": {
+                      "soort": "vergelijking",
+                      "operator": "<",
+                      "rechts": { "soort": "getal", "waarde": "25" }
+                    }
+                  }
+                ]
+              },
+              "actie": {
+                "soort": "gelijkstelling",
+                "doel": {
+                  "soort": "selectie",
+                  "object": { "soort": "referentie", "naar": "p" },
+                  "selector": { "soort": "attribuut", "naam": "categorie" }
+                },
+                "waarde": { "soort": "enumWaarde", "domein": "BMI categorie", "waarde": "Gezond gewicht" }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

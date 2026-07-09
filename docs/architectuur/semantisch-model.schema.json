@@ -1,0 +1,807 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sjzuurmond/ALEF/docs/architectuur/semantisch-model.schema.json",
+  "title": "ALEF semantisch regelmodel",
+  "description": "Interpreteerbaar semantisch model van een ALEF-regelmodel/regelservice: een geheel aan regels en gegevens waarmee wetgeving wordt uitgevoerd en dat gezamenlijk een of meer beslissingen/berekeningen maakt. Losgekoppeld van MPS, de projectionele editor en de generator-templates. Nesting = containment (de boom); string-verwijzingen (velden op '...Ref'/'*Naam'/'naar') = cross-references. Zie docs/architectuur/semantisch-model.md.",
+  "type": "object",
+  "required": ["naam", "objectschema", "regelgroepen"],
+  "additionalProperties": false,
+  "properties": {
+    "$comment": { "type": "string", "description": "Vrije toelichting; genegeerd bij interpretatie." },
+    "naam": { "type": "string" },
+    "objectschema": { "$ref": "#/$defs/Objectschema" },
+    "regelgroepen": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Regelgroep" }
+    },
+    "parametersets": {
+      "type": "array",
+      "description": "Wetsconstanten met waarden per geldigheidsperiode.",
+      "items": { "$ref": "#/$defs/Parameterset" }
+    }
+  },
+
+  "$defs": {
+
+    "Periode": {
+      "title": "Geldigheidsperiode",
+      "description": "Open-ended interval. Ontbrekende grens = onbegrensd; leeg object = altijd geldig. Grenzen zijn ISO-8601 datums.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "van": { "type": "string", "format": "date" },
+        "tot": { "type": "string", "format": "date" },
+        "totEnMet": { "type": "boolean", "default": true }
+      }
+    },
+
+    "Objectschema": {
+      "title": "Objectschema (gegevensspraak)",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "objecttypes": { "type": "array", "items": { "$ref": "#/$defs/Objecttype" } },
+        "domeinen": {
+          "type": "array",
+          "description": "Herbruikbare, benoemde datatypes (incl. enumeraties).",
+          "items": { "$ref": "#/$defs/Domein" }
+        },
+        "feittypes": { "type": "array", "items": { "$ref": "#/$defs/Feittype" } },
+        "dimensies": { "type": "array", "items": { "$ref": "#/$defs/Dimensie" } },
+        "eenheidsystemen": { "type": "array", "items": { "$ref": "#/$defs/Eenheidsysteem" } },
+        "parameters": { "type": "array", "items": { "$ref": "#/$defs/Parameter" } }
+      }
+    },
+
+    "Objecttype": {
+      "type": "object",
+      "required": ["naam"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "attributen": { "type": "array", "items": { "$ref": "#/$defs/Attribuut" } },
+        "kenmerken": {
+          "type": "array",
+          "description": "Boolean eigenschappen van het object.",
+          "items": {
+            "type": "object",
+            "required": ["naam"],
+            "additionalProperties": false,
+            "properties": { "naam": { "type": "string" } }
+          }
+        }
+      }
+    },
+
+    "Attribuut": {
+      "type": "object",
+      "required": ["naam", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "type": { "$ref": "#/$defs/Datatype" }
+      }
+    },
+
+    "Feittype": {
+      "description": "Relatie tussen objecttypes, via rollen.",
+      "type": "object",
+      "required": ["rollen"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "wederkerig": { "type": "boolean", "default": false },
+        "rollen": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["naam", "objecttype"],
+            "additionalProperties": false,
+            "properties": {
+              "naam": { "type": "string" },
+              "objecttype": { "type": "string", "description": "Verwijzing naar Objecttype.naam." },
+              "meervoudig": { "type": "boolean", "default": false, "description": "Cardinaliteit van de rol (Rol.single = false)." }
+            }
+          }
+        }
+      }
+    },
+
+    "Domein": {
+      "type": "object",
+      "required": ["naam", "basis"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "basis": { "$ref": "#/$defs/Datatype" }
+      }
+    },
+
+    "Dimensie": {
+      "type": "object",
+      "required": ["naam", "labels"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "labels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "Eenheidsysteem": {
+      "type": "object",
+      "required": ["naam", "basiseenheden"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "basiseenheden": { "type": "array", "items": { "type": "string" } },
+        "omrekenfactoren": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["basis", "factor"],
+            "additionalProperties": false,
+            "properties": {
+              "basis": { "type": "string" },
+              "factor": { "type": "string", "description": "Decimale factor als string (behoud precisie)." }
+            }
+          }
+        }
+      }
+    },
+
+    "Eenheid": {
+      "description": "Eenheid als breuk van machten van basiseenheden, bv. kg/m2 = teller[kg^1] / noemer[m^2].",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "teller": { "type": "array", "items": { "$ref": "#/$defs/EenheidMacht" } },
+        "noemer": { "type": "array", "items": { "$ref": "#/$defs/EenheidMacht" } },
+        "percentage": { "type": "boolean", "default": false }
+      }
+    },
+
+    "EenheidMacht": {
+      "type": "object",
+      "required": ["basis"],
+      "additionalProperties": false,
+      "properties": {
+        "basis": { "type": "string" },
+        "exponent": { "type": "integer", "default": 1 }
+      }
+    },
+
+    "Datatype": {
+      "title": "Datatype",
+      "description": "Getagd met 'soort'.",
+      "oneOf": [
+        { "$ref": "#/$defs/TypeNumeriek" },
+        { "$ref": "#/$defs/TypePercentage" },
+        { "$ref": "#/$defs/TypeTekst" },
+        { "$ref": "#/$defs/TypeBoolean" },
+        { "$ref": "#/$defs/TypeDatumTijd" },
+        { "$ref": "#/$defs/TypeEnumeratie" },
+        { "$ref": "#/$defs/TypeDomein" },
+        { "$ref": "#/$defs/TypeGedimensioneerd" }
+      ]
+    },
+    "TypeNumeriek": {
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "numeriek" },
+        "decimalen": { "type": "integer", "minimum": 0 },
+        "eenheid": { "$ref": "#/$defs/Eenheid" }
+      }
+    },
+    "TypePercentage": {
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "percentage" },
+        "decimalen": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "TypeTekst": {
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": { "soort": { "const": "tekst" } }
+    },
+    "TypeBoolean": {
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": { "soort": { "const": "boolean" } }
+    },
+    "TypeDatumTijd": {
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "datumtijd" },
+        "granulariteit": { "type": "string", "enum": ["dag", "maand", "jaar", "seconde"] }
+      }
+    },
+    "TypeEnumeratie": {
+      "description": "Inline enumeratie (anonieme waardenlijst).",
+      "type": "object",
+      "required": ["soort", "waarden"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "enumeratie" },
+        "waarden": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "TypeDomein": {
+      "description": "Verwijzing naar een benoemd Domein.",
+      "type": "object",
+      "required": ["soort", "domein"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "domein" },
+        "domein": { "type": "string", "description": "Verwijzing naar Domein.naam." }
+      }
+    },
+    "TypeGedimensioneerd": {
+      "type": "object",
+      "required": ["soort", "basis", "dimensies"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "gedimensioneerd" },
+        "basis": { "$ref": "#/$defs/Datatype" },
+        "dimensies": { "type": "array", "items": { "type": "string", "description": "Verwijzing naar Dimensie.naam." } }
+      }
+    },
+
+    "Parameter": {
+      "type": "object",
+      "required": ["naam", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "type": { "$ref": "#/$defs/Datatype" }
+      }
+    },
+    "Parameterset": {
+      "type": "object",
+      "required": ["geldig", "toekenningen"],
+      "additionalProperties": false,
+      "properties": {
+        "geldig": { "$ref": "#/$defs/Periode" },
+        "toekenningen": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["parameter", "waarde"],
+            "additionalProperties": false,
+            "properties": {
+              "parameter": { "type": "string", "description": "Verwijzing naar Parameter.naam." },
+              "waarde": { "$ref": "#/$defs/Literal" }
+            }
+          }
+        }
+      }
+    },
+
+    "Regelgroep": {
+      "type": "object",
+      "required": ["naam", "regels"],
+      "additionalProperties": false,
+      "properties": {
+        "naam": { "type": "string" },
+        "recursief": { "type": "boolean", "default": false, "description": "Herhaal tot fixpoint (afgeleide feiten voeden volgende regels)." },
+        "imperatief": { "type": "boolean", "default": false },
+        "regels": { "type": "array", "items": { "$ref": "#/$defs/Regel" } }
+      }
+    },
+
+    "Regel": {
+      "description": "Een regel met een of meer versies. Beslistabellen (beslistabelspraak) normaliseren naar dezelfde vorm en worden hier als gewone regels weergegeven.",
+      "type": "object",
+      "required": ["naam", "versies"],
+      "additionalProperties": false,
+      "properties": {
+        "$comment": { "type": "string", "description": "Vrije toelichting; genegeerd bij interpretatie." },
+        "naam": { "type": "string" },
+        "versies": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/RegelVersie" }
+        }
+      }
+    },
+
+    "RegelVersie": {
+      "description": "Geldig-per-periode. De regel geldt impliciet voor ELKE instantie van het onderwerp (universele kwantificatie), zichtbaar in de navigatiepaden via een 'universeel' anker.",
+      "type": "object",
+      "required": ["geldig", "actie"],
+      "additionalProperties": false,
+      "properties": {
+        "geldig": { "$ref": "#/$defs/Periode" },
+        "variabelen": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["naam", "waarde"],
+            "additionalProperties": false,
+            "properties": {
+              "naam": { "type": "string" },
+              "waarde": { "$ref": "#/$defs/Expressie" }
+            }
+          }
+        },
+        "conditie": { "$ref": "#/$defs/Conditie" },
+        "actie": { "$ref": "#/$defs/Actie" }
+      }
+    },
+
+    "Actie": {
+      "title": "Actie",
+      "description": "Een van acht effectsoorten. Alles herleidt tot lezen/schrijven van instantie-slots.",
+      "oneOf": [
+        { "$ref": "#/$defs/Gelijkstelling" },
+        { "$ref": "#/$defs/KenmerkToekenning" },
+        { "$ref": "#/$defs/ObjectCreatie" },
+        { "$ref": "#/$defs/FeitCreatie" },
+        { "$ref": "#/$defs/ConsistentieRegel" },
+        { "$ref": "#/$defs/Verdeling" },
+        { "$ref": "#/$defs/DagsoortDefinitie" },
+        { "$ref": "#/$defs/StartpuntBepaling" }
+      ]
+    },
+    "Gelijkstelling": {
+      "description": "Toekenning. initieel=true = Initialisatie (alleen zetten als nog leeg).",
+      "type": "object",
+      "required": ["soort", "doel"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "gelijkstelling" },
+        "initieel": { "type": "boolean", "default": false },
+        "doel": { "$ref": "#/$defs/Selectie" },
+        "waarde": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+    "KenmerkToekenning": {
+      "type": "object",
+      "required": ["soort", "kenmerk", "object"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "kenmerkToekenning" },
+        "kenmerk": { "type": "string", "description": "Verwijzing naar Kenmerk.naam." },
+        "object": { "$ref": "#/$defs/Pad" }
+      }
+    },
+    "ObjectCreatie": {
+      "type": "object",
+      "required": ["soort", "rol"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "objectCreatie" },
+        "rol": { "type": "string" },
+        "initialisaties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["eigenschap", "waarde"],
+            "additionalProperties": false,
+            "properties": {
+              "eigenschap": { "type": "string" },
+              "waarde": { "$ref": "#/$defs/Expressie" }
+            }
+          }
+        }
+      }
+    },
+    "FeitCreatie": {
+      "type": "object",
+      "required": ["soort", "rol", "ander"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "feitCreatie" },
+        "rol": { "type": "string" },
+        "ander": { "$ref": "#/$defs/Pad" }
+      }
+    },
+    "ConsistentieRegel": {
+      "description": "Schrijft geen waarde; hangt een consistentie-oordeel op.",
+      "type": "object",
+      "required": ["soort", "criterium"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "consistentieRegel" },
+        "criterium": { "$ref": "#/$defs/Conditie" }
+      }
+    },
+    "Verdeling": {
+      "type": "object",
+      "required": ["soort", "verdeelBedrag", "ontvanger"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "verdeling" },
+        "verdeelBedrag": { "$ref": "#/$defs/Selectie" },
+        "rest": { "$ref": "#/$defs/Selectie" },
+        "ontvanger": {
+          "type": "object",
+          "required": ["aandeel"],
+          "additionalProperties": false,
+          "properties": {
+            "aandeel": { "$ref": "#/$defs/Selectie" },
+            "rato": { "$ref": "#/$defs/Selectie" },
+            "maxAanspraak": { "$ref": "#/$defs/Selectie" },
+            "decimalen": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "DagsoortDefinitie": {
+      "type": "object",
+      "required": ["soort", "dagsoort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "dagsoortDefinitie" },
+        "dagsoort": { "type": "string" }
+      }
+    },
+    "StartpuntBepaling": {
+      "description": "regelspraak.tijd — startpunt van een tijdlijn bepalen.",
+      "type": "object",
+      "required": ["soort", "tijdlijn", "onderwerp", "startdatum"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "startpuntBepaling" },
+        "tijdlijn": { "type": "string" },
+        "onderwerp": { "$ref": "#/$defs/Pad" },
+        "startdatum": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+
+    "Conditie": {
+      "title": "Conditie",
+      "oneOf": [
+        { "$ref": "#/$defs/EnkeleVoorwaarde" },
+        { "$ref": "#/$defs/SamengesteldeVoorwaarde" },
+        { "$ref": "#/$defs/Uniciteit" }
+      ]
+    },
+    "EnkeleVoorwaarde": {
+      "description": "De linkerzijde van het predicaat is impliciet: het is 'expressie'.",
+      "type": "object",
+      "required": ["soort", "expressie", "predicaat"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "enkel" },
+        "quantificatie": { "$ref": "#/$defs/Quantificatie" },
+        "expressie": { "$ref": "#/$defs/Expressie" },
+        "predicaat": { "$ref": "#/$defs/Predicaat" }
+      }
+    },
+    "SamengesteldeVoorwaarde": {
+      "type": "object",
+      "required": ["soort", "logica", "subcondities"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "samengesteld" },
+        "logica": { "type": "string", "enum": ["en", "of", "nietAlle", "geen"] },
+        "quantificatie": { "$ref": "#/$defs/Quantificatie" },
+        "subcondities": { "type": "array", "items": { "$ref": "#/$defs/Conditie" } }
+      }
+    },
+    "Uniciteit": {
+      "type": "object",
+      "required": ["soort", "selecties"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "uniciteit" },
+        "selecties": { "type": "array", "items": { "$ref": "#/$defs/Selectie" } }
+      }
+    },
+
+    "Quantificatie": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["soort"], "additionalProperties": false,
+          "properties": { "soort": { "enum": ["alle", "geen"] } }
+        },
+        {
+          "type": "object", "required": ["soort", "modus", "aantal"], "additionalProperties": false,
+          "properties": {
+            "soort": { "const": "aantal" },
+            "modus": { "type": "string", "enum": ["tenMinste", "tenHoogste", "precies"] },
+            "aantal": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    },
+
+    "Predicaat": {
+      "title": "Predicaat",
+      "oneOf": [
+        { "$ref": "#/$defs/Vergelijking" },
+        { "$ref": "#/$defs/IsGevuld" },
+        { "$ref": "#/$defs/RolOfKenmerkCheck" },
+        { "$ref": "#/$defs/IsDagsoort" },
+        { "$ref": "#/$defs/Elfproef" }
+      ]
+    },
+    "Vergelijking": {
+      "type": "object",
+      "required": ["soort", "operator", "rechts"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "vergelijking" },
+        "operator": { "type": "string", "enum": ["<", "<=", "=", "<>", ">=", ">"] },
+        "rechts": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+    "IsGevuld": {
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "isGevuld" },
+        "ontkend": { "type": "boolean", "default": false, "description": "true = IsLeeg." }
+      }
+    },
+    "RolOfKenmerkCheck": {
+      "type": "object",
+      "required": ["soort", "rolOfKenmerk"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "rolOfKenmerk" },
+        "rolOfKenmerk": { "type": "string" },
+        "bezittelijk": { "type": "boolean", "default": false },
+        "ontkend": { "type": "boolean", "default": false }
+      }
+    },
+    "IsDagsoort": {
+      "type": "object",
+      "required": ["soort", "dagsoort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "isDagsoort" },
+        "dagsoort": { "type": "string" },
+        "ontkend": { "type": "boolean", "default": false }
+      }
+    },
+    "Elfproef": {
+      "type": "object",
+      "required": ["soort"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "elfproef" },
+        "ontkend": { "type": "boolean", "default": false }
+      }
+    },
+
+    "Pad": {
+      "title": "Padexpressie (OnderwerpExpressie)",
+      "description": "Navigatie door het objectschema. Recursief: het object van een selectie kan zelf een pad zijn ('de X van de Y van de Z').",
+      "oneOf": [
+        { "$ref": "#/$defs/Universeel" },
+        { "$ref": "#/$defs/Referentie" },
+        { "$ref": "#/$defs/Alle" },
+        { "$ref": "#/$defs/Selectie" },
+        { "$ref": "#/$defs/Subselectie" }
+      ]
+    },
+    "Universeel": {
+      "description": "UnivOnderwerp — 'een <objecttype>', het impliciete universele onderwerp. 'id' maakt het aanwijsbaar voor een latere referentie.",
+      "type": "object",
+      "required": ["soort", "objecttype"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "universeel" },
+        "id": { "type": "string" },
+        "objecttype": { "type": "string" }
+      }
+    },
+    "Referentie": {
+      "description": "OnderwerpRef — terugverwijzing naar een eerder benoemd anker (via 'id').",
+      "type": "object",
+      "required": ["soort", "naar"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "referentie" },
+        "naar": { "type": "string", "description": "Verwijzing naar Universeel.id (of een variabele)." }
+      }
+    },
+    "Alle": {
+      "description": "AlleOnderwerp — 'alle <objecttype>'.",
+      "type": "object",
+      "required": ["soort", "objecttype"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "alle" },
+        "objecttype": { "type": "string" }
+      }
+    },
+    "Selectie": {
+      "description": "ISelectie — 'de <selector> van <object>'. Zowel lees- (in expressies) als schrijfzijde (Gelijkstelling.doel).",
+      "type": "object",
+      "required": ["soort", "object", "selector"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "selectie" },
+        "object": { "$ref": "#/$defs/Pad" },
+        "selector": { "$ref": "#/$defs/Selector" }
+      }
+    },
+    "Subselectie": {
+      "description": "SubSelectie — gefilterde deelverzameling: 'de <object> die <predicaat>'.",
+      "type": "object",
+      "required": ["soort", "object", "predicaat"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "subselectie" },
+        "object": { "$ref": "#/$defs/Pad" },
+        "predicaat": { "$ref": "#/$defs/Predicaat" }
+      }
+    },
+    "Selector": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["soort", "naam"], "additionalProperties": false,
+          "properties": {
+            "soort": { "type": "string", "enum": ["attribuut", "kenmerk", "rol"] },
+            "naam": { "type": "string", "description": "Verwijzing naar Attribuut/Kenmerk/Rol op het objecttype." }
+          }
+        },
+        {
+          "type": "object", "required": ["soort", "selectoren"], "additionalProperties": false,
+          "properties": {
+            "soort": { "const": "combinatie" },
+            "selectoren": { "type": "array", "items": { "$ref": "#/$defs/Selector" } }
+          }
+        }
+      ]
+    },
+
+    "Expressie": {
+      "title": "Expressie",
+      "description": "Getagd met 'soort'. Navigatiepaden (soort=selectie/subselectie/universeel/referentie/alle) zijn ook expressies (OnderwerpExpressie : Expressie) en mogen als leeswaarde optreden.",
+      "oneOf": [
+        { "$ref": "#/$defs/Literal" },
+        { "$ref": "#/$defs/ParameterRef" },
+        { "$ref": "#/$defs/VariabeleRef" },
+        { "$ref": "#/$defs/Rekenkundig" },
+        { "$ref": "#/$defs/Haakjes" },
+        { "$ref": "#/$defs/Afronden" },
+        { "$ref": "#/$defs/Begrensd" },
+        { "$ref": "#/$defs/Aggregatie" },
+        { "$ref": "#/$defs/TekstExpressie" },
+        { "$ref": "#/$defs/DatumFunctie" },
+        { "$ref": "#/$defs/Tijdsoperator" },
+        { "$ref": "#/$defs/Universeel" },
+        { "$ref": "#/$defs/Referentie" },
+        { "$ref": "#/$defs/Alle" },
+        { "$ref": "#/$defs/Selectie" },
+        { "$ref": "#/$defs/Subselectie" }
+      ]
+    },
+
+    "Literal": {
+      "oneOf": [
+        {
+          "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
+          "properties": {
+            "soort": { "const": "getal" },
+            "waarde": { "type": "string", "description": "Decimaal als string (behoud precisie; komma of punt).", "pattern": "^-?[0-9]+([.,][0-9]+)?$" },
+            "eenheid": { "$ref": "#/$defs/Eenheid" }
+          }
+        },
+        {
+          "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
+          "properties": { "soort": { "const": "percentage" }, "waarde": { "type": "string" } }
+        },
+        {
+          "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
+          "properties": { "soort": { "const": "tekst" }, "waarde": { "type": "string" } }
+        },
+        {
+          "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
+          "properties": { "soort": { "const": "boolean" }, "waarde": { "type": "boolean" } }
+        },
+        {
+          "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
+          "properties": { "soort": { "const": "datum" }, "waarde": { "type": "string", "format": "date" } }
+        },
+        {
+          "description": "Verwijzing naar een enumeratiewaarde binnen een domein.",
+          "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
+          "properties": {
+            "soort": { "const": "enumWaarde" },
+            "domein": { "type": "string" },
+            "waarde": { "type": "string" }
+          }
+        }
+      ]
+    },
+
+    "ParameterRef": {
+      "type": "object", "required": ["soort", "parameter"], "additionalProperties": false,
+      "properties": { "soort": { "const": "parameter" }, "parameter": { "type": "string" } }
+    },
+    "VariabeleRef": {
+      "type": "object", "required": ["soort", "variabele"], "additionalProperties": false,
+      "properties": { "soort": { "const": "variabele" }, "variabele": { "type": "string" } }
+    },
+    "Rekenkundig": {
+      "description": "ArithmetischeExpressie — binair.",
+      "type": "object", "required": ["soort", "operator", "links", "rechts"], "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "rekenkundig" },
+        "operator": { "type": "string", "enum": ["+", "-", "*", "/", "^"] },
+        "links": { "$ref": "#/$defs/Expressie" },
+        "rechts": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+    "Haakjes": {
+      "type": "object", "required": ["soort", "waarde"], "additionalProperties": false,
+      "properties": { "soort": { "const": "haakjes" }, "waarde": { "$ref": "#/$defs/Expressie" } }
+    },
+    "Afronden": {
+      "type": "object", "required": ["soort", "afTeRonden", "decimalen"], "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "afronden" },
+        "afTeRonden": { "$ref": "#/$defs/Expressie" },
+        "decimalen": { "type": "integer", "minimum": 0 },
+        "hoe": { "type": "string", "enum": ["rekenkundig", "naarBoven", "naarBeneden", "naarNul"], "default": "rekenkundig" }
+      }
+    },
+    "Begrensd": {
+      "description": "BegrensdeExpressie — waarde geknipt tussen grenzen.",
+      "type": "object", "required": ["soort", "argument", "grenzen"], "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "begrensd" },
+        "argument": { "$ref": "#/$defs/Expressie" },
+        "grenzen": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "required": ["begrenzing", "waarde"], "additionalProperties": false,
+            "properties": {
+              "begrenzing": { "type": "string", "enum": ["minimaal", "maximaal"] },
+              "waarde": { "$ref": "#/$defs/Expressie" }
+            }
+          }
+        }
+      }
+    },
+    "Aggregatie": {
+      "description": "Aggregatie/DimensieAggregatie over een lijst of dimensielabels.",
+      "type": "object", "required": ["soort", "functie", "lijst"], "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "aggregatie" },
+        "functie": { "type": "string", "enum": ["som", "aantal", "minimum", "maximum", "gemiddelde"] },
+        "lijst": { "$ref": "#/$defs/Expressie" }
+      }
+    },
+    "TekstExpressie": {
+      "type": "object", "required": ["soort", "delen"], "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "tekstExpressie" },
+        "delen": { "type": "array", "items": { "$ref": "#/$defs/Expressie" } }
+      }
+    },
+    "DatumFunctie": {
+      "type": "object", "required": ["soort", "functie"], "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "datumFunctie" },
+        "functie": { "type": "string", "enum": ["datumTijdVerschil", "datumElementUit", "datumMetJaarMaandDag", "eerstePaasdag"] },
+        "argumenten": { "type": "array", "items": { "$ref": "#/$defs/Expressie" } }
+      }
+    },
+    "Tijdsoperator": {
+      "description": "regelspraak.tijd — operatoren over tijdlijn-waardige slots.",
+      "type": "object", "required": ["soort", "operator"], "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "tijdsoperator" },
+        "operator": { "type": "string", "enum": ["tijdsevenredig", "tijdsduurDat", "conditioneel"] },
+        "expressie": { "$ref": "#/$defs/Expressie" },
+        "conditie": { "$ref": "#/$defs/Conditie" }
+      }
+    }
+  }
+}
