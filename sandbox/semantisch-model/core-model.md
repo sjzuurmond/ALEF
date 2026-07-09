@@ -40,7 +40,16 @@ V.check_schema(s); print('VALID' if not list(V(s).iter_errors(e)) else 'INVALID'
   `timelineStart`.
 - **Navigatie** door het model: `selection` ("the X of the Y"), `subselection`,
   aggregatie *over instanties*.
-- **Tijdlijnen** en dimensies.
+- **Tijd als dimensie.** Een waarde is een functie van context. Tijd is één as en is
+  gemodelleerd als `Dimension` met `kind: "time"` (granulariteit + start) — net als
+  ALEF's `Tijdsdimensie : IDimensie` — dus een **timeline-waardig slot** is gewoon een
+  `dimensioned` type over een tijddimensie; er is geen apart timeline-type. Variatie
+  per instantie/relatie loopt via de objectgraaf, per toestand via condities (dus geen
+  dimensie). Een constante die per periode verschilt is een `timeVarying`-literal, dus
+  tijdvariatie kan op **twee** niveaus: `ParameterSet`-`validity` én een
+  `timeVarying`-literal binnen één set. Zie
+  **[`core-model.temporal-example.json`](./core-model.temporal-example.json)**
+  (maandelijkse income-tijdlijn + mid-jaar verhoogde minimumWage).
 
 **Veranderd — generiek en schoon:**
 

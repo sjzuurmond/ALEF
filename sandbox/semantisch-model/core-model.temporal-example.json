@@ -1,0 +1,103 @@
+{
+  "$comment": "Demonstrates temporal reasoning via the unified 'time-is-a-dimension' design. An Employee has a monthly-timeline income (an attribute dimensioned over a time axis); a rule totals it over the year into annualIncome. A parameter (minimumWage) is time-varying (raised mid-year), showing BOTH mechanisms: parameter-set validity AND a per-value time-varying constant.",
+  "name": "Income over time",
+  "dataModel": {
+    "dimensions": [
+      { "kind": "time", "id": "dim.months2026", "name": "months2026", "granularity": { "unit": "month" }, "start": "2026-01-01" }
+    ],
+    "entityTypes": [
+      {
+        "id": "et.employee",
+        "name": "Employee",
+        "attributes": [
+          {
+            "id": "at.employee.income",
+            "name": "income",
+            "type": {
+              "kind": "dimensioned",
+              "base": { "kind": "number", "spec": { "unit": "euro", "precision": 2 } },
+              "dimensions": ["months2026"]
+            }
+          },
+          {
+            "id": "at.employee.annualIncome",
+            "name": "annualIncome",
+            "type": { "kind": "number", "spec": { "unit": "euro", "precision": 2 } }
+          }
+        ]
+      }
+    ],
+    "parameters": [
+      { "id": "par.minimumWage", "name": "minimumWage", "type": { "kind": "number", "spec": { "unit": "euro", "precision": 2 } } }
+    ]
+  },
+  "ruleGroups": [
+    {
+      "name": "Income rules",
+      "rules": [
+        {
+          "$comment": "annualIncome of an Employee = total-over-time of the income of the Employee. 'total' aggregates the timeline over the time axis.",
+          "id": "rule.annualIncome",
+          "name": "Annual income",
+          "versions": [
+            {
+              "id": "rule.annualIncome.v1",
+              "validity": { "from": "2026-01-01" },
+              "action": {
+                "kind": "assignment",
+                "target": {
+                  "kind": "selection",
+                  "id": "sel.annualIncome",
+                  "object": { "kind": "universal", "id": "emp", "entityType": "Employee" },
+                  "selector": { "kind": "attribute", "name": "annualIncome" }
+                },
+                "value": {
+                  "kind": "temporal",
+                  "op": "total",
+                  "expression": {
+                    "kind": "selection",
+                    "id": "sel.income",
+                    "object": { "kind": "reference", "to": "emp" },
+                    "selector": { "kind": "attribute", "name": "income" }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "parameterSets": [
+    {
+      "validity": { "from": "2026-01-01", "to": "2027-01-01" },
+      "assignments": [
+        {
+          "parameter": "minimumWage",
+          "value": {
+            "kind": "timeVarying",
+            "cases": [
+              { "from": "2026-01-01", "to": "2026-07-01", "value": { "kind": "number", "value": "2000.00", "unit": "euro" } },
+              { "from": "2026-07-01", "value": { "kind": "number", "value": "2100.00", "unit": "euro" } }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": {
+    "rule.annualIncome.v1": {
+      "comment": "Sums the monthly income timeline over the year.",
+      "rendering": {
+        "text": "The annualIncome of an Employee equals the total over time of the income of the Employee.",
+        "segments": [
+          { "text": "The " },
+          { "origin": "sel.annualIncome", "target": "at.employee.annualIncome", "text": "annualIncome" },
+          { "text": " of an Employee equals the total over time of " },
+          { "origin": "sel.income", "target": "at.employee.income", "text": "the income of the Employee" },
+          { "text": "." }
+        ]
+      }
+    }
+  }
+}

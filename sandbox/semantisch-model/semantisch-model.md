@@ -239,6 +239,18 @@ PY
   `Gelijkstelling` is de waarde van zijn `doel`-`Selectie`, en consistentie-oordelen
   hangen aan het regel-id). Id's zijn optioneel: ken ze alleen toe waar je een
   verwijzing of waarde-uitlezing nodig hebt.
+- **Tijd is een dimensie.** Een waarde is een functie van context; tijd is één
+  context-as. In plaats van een apart tijdlijn-type is tijd gemodelleerd als
+  `Dimensie` met `soort: "tijd"` (granulariteit + startpunt) — precies zoals ALEF's
+  eigen `Tijdsdimensie : IDimensie`. Een **tijdlijn-waardig slot** is daarmee gewoon
+  een `gedimensioneerd` attribuut over een tijddimensie; de tijd-operatoren
+  (`Totaal`, `Tijdsevenredig`, `Tijdsoperator`) hebben nu een typeerbare basis.
+  Variatie *per instantie/relatie* is géén dimensie maar loopt via de objectgraaf
+  (navigatie); variatie *per toestand* via condities. Een constante die per periode
+  verschilt is een `tijdsafhankelijk`-literal — dus tijdvariatie kan op **twee**
+  niveaus: de `Geldigheidsperiode` van een hele `Parameterset` én een
+  `tijdsafhankelijk`-literal binnen één set. De evaluatie-trace draagt de uitkomst als
+  `tijdlijn`-waarde (`perioden: [{van,tot,waarde}]`).
 - Weggelaten: editor-scaffolding, Nederlandse grammatica (`ITaalkundig`),
   testdekking (`ICoverageArc`) en generatie-only helpers — conform het
   keep/drop-filter hierboven.

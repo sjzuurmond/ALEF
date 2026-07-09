@@ -124,12 +124,43 @@
     },
 
     "Dimensie": {
+      "title": "Dimensie",
+      "description": "Een as waarover een waarde kan varieren. 'labels' = benoemde labels (per schijf, per regio). 'tijd' = een tijdas met granulariteit: tijd is als dimensie gemodelleerd (ALEF Tijdsdimensie : IDimensie), dus een tijdlijn-waardig attribuut is gewoon een 'gedimensioneerd' type over een tijddimensie — geen apart tijdlijn-datatype. Variatie per instantie/relatie loopt via de objectgraaf (navigatie), variatie per toestand via condities; die zijn dus geen dimensie.",
+      "oneOf": [
+        { "$ref": "#/$defs/LabelDimensie" },
+        { "$ref": "#/$defs/TijdDimensie" }
+      ]
+    },
+    "LabelDimensie": {
       "type": "object",
-      "required": ["naam", "labels"],
+      "required": ["soort", "naam", "labels"],
       "additionalProperties": false,
       "properties": {
+        "soort": { "const": "labels" },
+        "id": { "$ref": "#/$defs/NodeId" },
         "naam": { "type": "string" },
         "labels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "TijdDimensie": {
+      "description": "Een tijdas (ALEF Tijdsdimensie/Tijdlijn). granulariteit = de stap (Tijdgranulariteit); startpunt = waar de tijdlijn is verankerd (Startpunt).",
+      "type": "object",
+      "required": ["soort", "naam", "granulariteit"],
+      "additionalProperties": false,
+      "properties": {
+        "soort": { "const": "tijd" },
+        "id": { "$ref": "#/$defs/NodeId" },
+        "naam": { "type": "string" },
+        "granulariteit": {
+          "type": "object",
+          "required": ["eenheid"],
+          "additionalProperties": false,
+          "properties": {
+            "aantal": { "type": "integer", "minimum": 1, "default": 1 },
+            "eenheid": { "type": "string", "enum": ["dag", "week", "maand", "jaar", "continu"] }
+          }
+        },
+        "startpunt": { "type": "string", "description": "Verankering: een ISO-datum of contextverwijzing (bv. $rekenjaarStart)." }
       }
     },
 
@@ -475,7 +506,7 @@
       "additionalProperties": false,
       "properties": {
         "soort": { "const": "startpuntBepaling" },
-        "tijdlijn": { "type": "string" },
+        "tijdlijn": { "type": "string", "description": "Verwijzing naar het tijdlijn-waardige attribuut / de tijddimensie waarvan het startpunt wordt gezet." },
         "onderwerp": { "$ref": "#/$defs/Pad" },
         "startdatum": { "$ref": "#/$defs/Expressie" }
       }
@@ -814,6 +845,24 @@
           "description": "Rekenjaar — het jaar waarop wordt gerekend (context-literal).",
           "type": "object", "required": ["soort"], "additionalProperties": false,
           "properties": { "soort": { "const": "rekenjaar" } }
+        },
+        {
+          "description": "Tijdsafhankelijke literal (ALEF TijdsafhankelijkeLiteral/LiteralMetPeriode): een constante die zelf per periode verschilt. Aanvullend op de Parameterset-geldigheid — zo kan een constante varieren zowel per geldige set ALS binnen een set over de tijd.",
+          "type": "object", "required": ["soort", "cases"], "additionalProperties": false,
+          "properties": {
+            "soort": { "const": "tijdsafhankelijk" },
+            "cases": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object", "required": ["waarde"], "additionalProperties": false,
+                "properties": {
+                  "van": { "type": "string", "format": "date" },
+                  "tot": { "type": "string", "format": "date" },
+                  "waarde": { "$ref": "#/$defs/Literal" }
+                }
+              }
+            }
+          }
         }
       ]
     },

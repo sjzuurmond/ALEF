@@ -106,6 +106,10 @@ def main():
         per[bucket].append((c, fq))
     tot = sum(counts.values())
     print(f"gescand: {nfiles} modellen, {len(counts)} concepten, {tot} node-gebruiken\n")
+    if tot == 0:
+        print("Geen solution-modellen gevonden. Draai vanuit de repo-root, of geef het pad mee:\n"
+              "  python3 sandbox/semantisch-model/dekking-scan.py /pad/naar/repo-root")
+        return
     for bucket in ("GEDEKT", "BUITEN SCOPE / GENORMALISEERD", "NOG TE DOEN"):
         items = sorted(per[bucket], reverse=True)
         n = sum(c for c, _ in items)

@@ -123,14 +123,43 @@
     },
 
     "Dimension": {
-      "description": "A named axis; attributes may be arrays over its labels (per year, per bracket).",
+      "title": "Dimension",
+      "description": "An axis a value can vary over. A value is a function of context; a dimension is one context axis. 'labels' = named labels (per bracket, per region). 'time' = a timeline axis with a granularity: time is unified as a dimension (matching ALEF's Tijdsdimensie : IDimensie), so a timeline-valued attribute is simply a 'dimensioned' type over a time dimension — no separate timeline datatype. Other axes a value varies over are NOT dimensions: per-instance/relationship variation is handled by the object graph (navigation), and state-based variation by conditions.",
+      "oneOf": [
+        { "$ref": "#/$defs/LabeledDimension" },
+        { "$ref": "#/$defs/TimeDimension" }
+      ]
+    },
+    "LabeledDimension": {
       "type": "object",
-      "required": ["name", "labels"],
+      "required": ["kind", "name", "labels"],
       "additionalProperties": false,
       "properties": {
+        "kind": { "const": "labels" },
         "id": { "$ref": "#/$defs/NodeId" },
         "name": { "type": "string" },
         "labels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "TimeDimension": {
+      "description": "A time axis (ALEF Tijdsdimensie/Tijdlijn). Granularity = the step; start = where the timeline is anchored.",
+      "type": "object",
+      "required": ["kind", "name", "granularity"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "time" },
+        "id": { "$ref": "#/$defs/NodeId" },
+        "name": { "type": "string" },
+        "granularity": {
+          "type": "object",
+          "required": ["unit"],
+          "additionalProperties": false,
+          "properties": {
+            "amount": { "type": "integer", "minimum": 1, "default": 1 },
+            "unit": { "type": "string", "enum": ["day", "week", "month", "year", "continuous"] }
+          }
+        },
+        "start": { "type": "string", "description": "Anchor: an ISO date or a context reference (e.g. $calculationYearStart)." }
       }
     },
 
@@ -694,7 +723,25 @@
         },
         { "description": "Explicit absence of a value.", "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "empty" } } },
         { "description": "The date being calculated for (context literal).", "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "calculationDate" } } },
-        { "description": "The year being calculated for (context literal).", "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "calculationYear" } } }
+        { "description": "The year being calculated for (context literal).", "type": "object", "required": ["kind"], "additionalProperties": false, "properties": { "kind": { "const": "calculationYear" } } },
+        {
+          "description": "Time-varying constant (ALEF TijdsafhankelijkeLiteral/LiteralMetPeriode): a value that itself differs per period. Complements ParameterSet-level validity — so a constant can vary both by which set applies AND within a set over time.",
+          "type": "object", "required": ["kind", "cases"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "timeVarying" },
+            "cases": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object", "required": ["value"], "additionalProperties": false,
+                "properties": {
+                  "from": { "type": "string", "format": "date" },
+                  "to": { "type": "string", "format": "date" },
+                  "value": { "$ref": "#/$defs/Literal" }
+                }
+              }
+            }
+          }
+        }
       ]
     },
     "ParameterRef": {
