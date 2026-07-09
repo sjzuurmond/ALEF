@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sjzuurmond/ALEF/sandbox/semantisch-model/evaluation-trace.schema.json",
+  "title": "Evaluation trace",
+  "description": "Runtime values of ONE run of a core rule model against ONE test case (instance data + calculation date). A side artifact, separate from the model: values are keyed by (instance, node id), where node id refers to an 'id' in the model (core-model.schema.json). Pairs with the model's rendering segments via node id (a segment's 'origin'), so a UI can show values inline: 'the bmi [20.0]'. A value is recorded per node that evaluates to something — selections, expressions, conditions (boolean), variables.",
+  "type": "object",
+  "required": ["model", "testCase", "calculationDate", "values"],
+  "additionalProperties": false,
+  "properties": {
+    "$comment": { "type": "string" },
+    "model": { "type": "string", "description": "Name/reference of the rule model this trace belongs to." },
+    "testCase": { "type": "string", "description": "Name of the executed test case." },
+    "calculationDate": { "type": "string", "format": "date", "description": "The date calculated for; selects valid rule versions / parameter sets and samples timelines." },
+    "instances": {
+      "type": "array",
+      "description": "The objects that exist in this run (inputs + created during the run).",
+      "items": {
+        "type": "object",
+        "required": ["id", "entityType"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Instance identity, used as a key in 'values'." },
+          "entityType": { "type": "string", "description": "Ref to EntityType.name in the model." },
+          "name": { "type": "string" }
+        }
+      }
+    },
+    "values": {
+      "type": "object",
+      "description": "values[instanceId][nodeId] = the evaluated value of that model node for that instance.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "$ref": "#/$defs/Value" }
+      }
+    },
+    "fired": {
+      "type": "array",
+      "description": "Which rule versions fired, per instance ('which rule determined this value').",
+      "items": {
+        "type": "object",
+        "required": ["ruleVersion"],
+        "additionalProperties": false,
+        "properties": {
+          "ruleVersion": { "type": "string", "description": "Ref to RuleVersion.id in the model." },
+          "instance": { "type": "string" }
+        }
+      }
+    },
+    "consistency": {
+      "type": "array",
+      "description": "Outcomes of consistencyCheck actions.",
+      "items": {
+        "type": "object",
+        "required": ["rule", "consistent"],
+        "additionalProperties": false,
+        "properties": {
+          "rule": { "type": "string", "description": "Ref to Rule.id / RuleVersion.id." },
+          "instance": { "type": "string" },
+          "consistent": { "type": "boolean" }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "Value": {
+      "title": "Runtime value",
+      "description": "Tagged with 'kind'. The 'timeline' kind carries a piecewise-constant function of time, matching attributes dimensioned over a time dimension.",
+      "oneOf": [
+        {
+          "type": "object", "required": ["kind", "value"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "number" },
+            "value": { "type": "string", "description": "Decimal as a string (preserve precision)." },
+            "unit": { "type": "string", "description": "e.g. 'euro', 'kg'. Shown in a UI as 'the premium [100 euro]'." }
+          }
+        },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "percentage" }, "value": { "type": "string" } } },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "text" }, "value": { "type": "string" } } },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "boolean" }, "value": { "type": "boolean" } } },
+        { "type": "object", "required": ["kind", "value"], "additionalProperties": false, "properties": { "kind": { "const": "date" }, "value": { "type": "string", "format": "date" } } },
+        {
+          "type": "object", "required": ["kind", "value"], "additionalProperties": false,
+          "properties": { "kind": { "const": "enumValue" }, "domain": { "type": "string" }, "value": { "type": "string" } }
+        },
+        {
+          "description": "No value (empty slot).",
+          "type": "object", "required": ["kind"], "additionalProperties": false,
+          "properties": { "kind": { "const": "empty" } }
+        },
+        {
+          "description": "A collection of values.",
+          "type": "object", "required": ["kind", "elements"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "list" },
+            "elements": { "type": "array", "items": { "$ref": "#/$defs/Value" } }
+          }
+        },
+        {
+          "description": "A reference to an instance.",
+          "type": "object", "required": ["kind", "instance"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "object" },
+            "instance": { "type": "string", "description": "Ref to instances[].id." }
+          }
+        },
+        {
+          "description": "Timeline value: piecewise-constant function of time.",
+          "type": "object", "required": ["kind", "periods"], "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "timeline" },
+            "periods": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["value"],
+                "additionalProperties": false,
+                "properties": {
+                  "from": { "type": "string", "format": "date" },
+                  "to": { "type": "string", "format": "date" },
+                  "value": { "$ref": "#/$defs/Value" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$comment": "Evaluation trace of core-model.example.json for one test case. Node ids refer to 'id's in the model; paired with rendering.segments[].origin this renders: 'The bmi [20.0] of a Person equals the weight of the Person [80 kg] divided by (the height of the Person [2.00 m] times the height of the Person [2.00 m]), rounded to 1 decimal.'",
+  "model": "BMI",
+  "testCase": "Jan — healthy weight",
+  "calculationDate": "2026-01-01",
+  "instances": [
+    { "id": "person#Jan", "entityType": "Person", "name": "Jan" }
+  ],
+  "values": {
+    "person#Jan": {
+      "sel.weight": { "kind": "number", "value": "80", "unit": "kg" },
+      "sel.height.1": { "kind": "number", "value": "2.00", "unit": "m" },
+      "sel.height.2": { "kind": "number", "value": "2.00", "unit": "m" },
+      "sel.bmi": { "kind": "number", "value": "20.0" },
+      "sel.category": { "kind": "enumValue", "domain": "BMICategory", "value": "Healthy weight" }
+    }
+  },
+  "fired": [
+    { "ruleVersion": "rule.bmi.v1", "instance": "person#Jan" },
+    { "ruleVersion": "rule.bmi.table.v1", "instance": "person#Jan" }
+  ]
+}

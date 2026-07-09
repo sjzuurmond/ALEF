@@ -108,6 +108,7 @@
           "name": "BMI category (table)",
           "versions": [
             {
+              "id": "rule.bmi.table.v1",
               "validity": {},
               "condition": {
                 "kind": "compound",
@@ -137,6 +138,7 @@
                 "kind": "assignment",
                 "target": {
                   "kind": "selection",
+                  "id": "sel.category",
                   "object": { "kind": "reference", "to": "p" },
                   "selector": { "kind": "attribute", "name": "category" }
                 },

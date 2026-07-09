@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/sjzuurmond/ALEF/sandbox/semantisch-model/core-model.schema.json",
   "title": "Object-centric rule interchange core",
-  "description": "A generic, engine-agnostic semantic core for executable legislation. Keeps ALEF's object/instance-centric shape (entities, relations, universally-quantified rules, object-graph actions, dimensions, units, timelines) because that matches how law is formulated, but uses generic English terminology and a clean operation-based expression IR instead of surface-specific constructs. Theoretical trial; deliberately NOT identical to RegelRecht RFC-001, but borrows its clean bits (operation enum, type_spec, temporal spec, output-as-value). Discriminator field is 'kind'. Nesting = containment; string fields ending in Ref / named 'to'/'*Id' = cross-references. See core-model.md.",
+  "description": "A generic, engine-agnostic semantic core for executable legislation, meant to be interpreted directly. Object/instance-centric (entities, relations, universally-quantified rules, object-graph actions, dimensions, units) because that matches how law is formulated; derived from ALEF's Regelspraak languages but with generic English terminology and a single operation-based expression IR instead of surface-specific constructs. Discriminator field is 'kind'. Nesting = containment (the tree); string reference fields ('to', '*.name' lookups) = cross-references, resolved by NodeId or name. See README.md for the design and evaluation semantics.",
   "type": "object",
   "required": ["name", "dataModel", "ruleGroups"],
   "additionalProperties": false,
@@ -74,14 +74,14 @@
     },
 
     "Attribute": {
+      "description": "A typed slot on an entity type. A time-varying attribute is declared by giving it a 'dimensioned' type over a time dimension — there is no separate temporal marker (time is a dimension).",
       "type": "object",
       "required": ["name", "type"],
       "additionalProperties": false,
       "properties": {
         "id": { "$ref": "#/$defs/NodeId" },
         "name": { "type": "string" },
-        "type": { "$ref": "#/$defs/DataType" },
-        "temporal": { "$ref": "#/$defs/Temporal" }
+        "type": { "$ref": "#/$defs/DataType" }
       }
     },
 
@@ -305,18 +305,6 @@
       "properties": { "base": { "type": "string" }, "exponent": { "type": "integer", "default": 1 } }
     },
 
-    "Temporal": {
-      "description": "How a value relates to time (RegelRecht-style clean version; ALEF's full timeline algebra is the richer superset noted in core-model.md).",
-      "type": "object",
-      "required": ["type"],
-      "additionalProperties": false,
-      "properties": {
-        "type": { "type": "string", "enum": ["period", "pointInTime"] },
-        "periodType": { "type": "string", "enum": ["year", "month", "day", "continuous"] },
-        "reference": { "type": "string", "description": "e.g. $calculationDate, $januaryFirst." }
-      }
-    },
-
     "RuleGroup": {
       "type": "object",
       "required": ["name", "rules"],
@@ -459,10 +447,11 @@
       "properties": { "kind": { "const": "dayTypeDefinition" }, "dayType": { "type": "string" } }
     },
     "TimelineStart": {
+      "description": "Anchor a per-instance time axis: sets, for each subject instance, the start of the named time dimension (e.g. 'the insurance timeline of a person starts on the date of registration').",
       "type": "object", "required": ["kind", "timeline", "subject", "startDate"], "additionalProperties": false,
       "properties": {
         "kind": { "const": "timelineStart" },
-        "timeline": { "type": "string" },
+        "timeline": { "type": "string", "description": "Ref to a TimeDimension.name (or a time-dimensioned attribute)." },
         "subject": { "$ref": "#/$defs/Subject" },
         "startDate": { "$ref": "#/$defs/Expression" }
       }
@@ -554,7 +543,7 @@
         { "$ref": "#/$defs/IsFilled" },
         { "$ref": "#/$defs/HasRoleOrCharacteristic" },
         { "$ref": "#/$defs/IsDayType" },
-        { "$ref": "#/$defs/ChecksumEleven" },
+        { "$ref": "#/$defs/Checksum" },
         { "$ref": "#/$defs/IsNumericWithLength" }
       ]
     },
@@ -594,12 +583,13 @@
         "negated": { "type": "boolean", "default": false }
       }
     },
-    "ChecksumEleven": {
-      "description": "The Dutch eleven-test (BSN checksum). Kept generic; other jurisdictions plug in their own checksum predicate.",
-      "type": "object", "required": ["kind"], "additionalProperties": false,
+    "Checksum": {
+      "description": "Checksum validity of an identifier. 'algorithm' names the scheme; jurisdictions plug in their own (e.g. elevenProof = the Dutch BSN eleven-test, mod97 = IBAN).",
+      "type": "object", "required": ["kind", "algorithm"], "additionalProperties": false,
       "properties": {
         "id": { "$ref": "#/$defs/NodeId" },
-        "kind": { "const": "checksumEleven" },
+        "kind": { "const": "checksum" },
+        "algorithm": { "type": "string", "examples": ["elevenProof", "mod97", "luhn"] },
         "negated": { "type": "boolean", "default": false }
       }
     },
@@ -753,7 +743,7 @@
       "properties": { "id": { "$ref": "#/$defs/NodeId" }, "kind": { "const": "variable" }, "variable": { "type": "string" } }
     },
     "Operation": {
-      "description": "Generic scalar operation IR (RegelRecht-inspired). Covers ALEF's arithmetic, bounding (min/max), rounding, abs/sqrt, power and percentageOf. VerminderdMet desugars to max(subtract,0); parentheses are implicit in the operand tree.",
+      "description": "Generic scalar operation IR. Covers arithmetic, bounding (min/max), rounding and abs/sqrt/power. Reducible surface constructs desugar into it: 'X reduced by Y (not below zero)' = max(subtract(x,y), 0); 'p% of x' = multiply(divide(p,100), x); parentheses are implicit in the operand tree.",
       "type": "object", "required": ["kind", "op", "operands"], "additionalProperties": false,
       "properties": {
         "id": { "$ref": "#/$defs/NodeId" },
@@ -761,7 +751,7 @@
         "op": {
           "type": "string",
           "enum": ["add", "subtract", "multiply", "divide", "power", "min", "max",
-                   "abs", "sqrt", "round", "ceil", "floor", "percentageOf"]
+                   "abs", "sqrt", "round", "ceil", "floor"]
         },
         "operands": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Expression" } },
         "precision": { "type": "integer", "minimum": 0, "description": "For round/ceil/floor: decimal places." }
